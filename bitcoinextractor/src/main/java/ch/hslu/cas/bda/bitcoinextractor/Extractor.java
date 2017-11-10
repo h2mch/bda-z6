@@ -25,6 +25,7 @@ import java.util.stream.StreamSupport;
 
 public class Extractor {
 
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Extractor.class);
 
     private static final String BITCOIN_BLOCKS = "D:\\docker-share\\bitcoin\\blocks\\";
 
@@ -44,6 +45,7 @@ public class Extractor {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        logger.info("'{}' Files found", blockChainFiles.size());
 
         NetworkParameters networkParameters = new MainNetParams();
         BlockFileLoader blockFileLoader = new BlockFileLoader(networkParameters, blockChainFiles);
@@ -54,14 +56,22 @@ public class Extractor {
         Map<String, Integer> monthlyBlockSize = new HashMap<>();
 
         Block lastBlock = null;
+        int blockcount = 0;
         try {
+            Instant last = Instant.now();
             for (Block block : blockFileLoader) {
+                blockcount++;
+                if (blockcount % 100000 == 0) {
+                    Instant current = Instant.now();
+                    logger.info("'{}' Blocks processed in {} sec", blockcount, Duration.between(last, current).getSeconds());
+                    last = current;
+                }
                 lastBlock = block;
                 LocalDate localDate = block.getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                 String date = localDate.format(DateTimeFormatter.ofPattern("yyyy.MM"));
 
                 if (block.getTransactions() == null) {
-                    System.err.println("Could not process Block " + block.toString());
+                    logger.error("Could not process Blocknumber {} \n{}", blockcount, block.toString());
                     continue;
                 }
                 if (!monthlyBlockCount.containsKey(date)) {
@@ -78,21 +88,20 @@ public class Extractor {
 
             LocalDate localDate = lastBlock.getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             String date = localDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
-            System.out.println("Error after following block");
-            System.out.println(date);
-            System.out.println(lastBlock.toString());
+            logger.error("Error after {} and blocknumber '{}'", date, blockcount);
+            logger.error(lastBlock.toString());
         }
 
 
         for (String month : monthlyBlockSize.keySet()) {
             float avgTx = (float) monthlyTransactionCount.get(month) / monthlyBlockSize.get(month);
-            System.out.println(month + " => " + avgTx);
+            logger.info("{} => {}", month, avgTx);
         }
 
         Instant endTime = Instant.now();
         Duration duration = Duration.between(startTime, endTime);
 
-        System.out.println("Blocks from " + blockChainFiles.get(0).getName() + " to " + blockChainFiles.get(blockChainFiles.size() - 1).getName());
-        System.out.println("Executiontime: " + duration.getSeconds() + "sec");
+        logger.info("Blocks from {} to {}", blockChainFiles.get(0).getName(), blockChainFiles.get(blockChainFiles.size() - 1).getName());
+        logger.info("Executiontime: {} sec", duration.getSeconds());
     }
 }
