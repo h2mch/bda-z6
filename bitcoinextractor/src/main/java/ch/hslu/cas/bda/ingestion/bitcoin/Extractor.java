@@ -1,8 +1,11 @@
-package ch.hslu.cas.bda.bitcoinextractor;
+package ch.hslu.cas.bda.ingestion.bitcoin;
 
 import org.bitcoinj.core.Block;
 import org.bitcoinj.core.Context;
 import org.bitcoinj.core.NetworkParameters;
+import org.bitcoinj.core.Transaction;
+import org.bitcoinj.core.TransactionInput;
+import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.utils.BlockFileLoader;
 
@@ -56,16 +59,12 @@ public class Extractor {
         Map<String, Integer> monthlyBlockSize = new HashMap<>();
 
         Block lastBlock = null;
+        long transactionCount = 0;
         int blockcount = 0;
         try {
             Instant last = Instant.now();
             for (Block block : blockFileLoader) {
                 blockcount++;
-                if (blockcount % 100000 == 0) {
-                    Instant current = Instant.now();
-                    logger.info("'{}' Blocks processed in {} sec", blockcount, Duration.between(last, current).getSeconds());
-                    last = current;
-                }
                 lastBlock = block;
                 LocalDate localDate = block.getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                 String date = localDate.format(DateTimeFormatter.ofPattern("yyyy.MM"));
@@ -81,8 +80,21 @@ public class Extractor {
                 }
 
                 monthlyBlockCount.put(date, 1 + monthlyBlockCount.get(date));
-                monthlyTransactionCount.put(date, block.getTransactions().size() + monthlyTransactionCount.get(date));
+                int txSize = block.getTransactions().size();
+                for (Transaction transaction : block.getTransactions()) {
+                    transaction.getMemo();
+                    transactionCount++;
+                    List<TransactionInput> inputs = transaction.getInputs();
+                    List<TransactionOutput> outputs = transaction.getOutputs();
+                }
+                monthlyTransactionCount.put(date, txSize + monthlyTransactionCount.get(date));
                 monthlyBlockSize.put(date, block.getMessageSize() + monthlyBlockSize.get(date));
+
+                if (blockcount % 50000 == 0) {
+                    Instant current = Instant.now();
+                    logger.info("{} Blocks - {} Transaction processed in {} sec", blockcount, transactionCount, Duration.between(last, current).getSeconds());
+                    last = current;
+                }
             }
         } catch (Exception ex) {
 
@@ -100,8 +112,8 @@ public class Extractor {
 
         Instant endTime = Instant.now();
         Duration duration = Duration.between(startTime, endTime);
-
+        logger.info("{} Blocks - {} Transaction", blockcount, transactionCount);
         logger.info("Blocks from {} to {}", blockChainFiles.get(0).getName(), blockChainFiles.get(blockChainFiles.size() - 1).getName());
-        logger.info("Executiontime: {} sec", duration.getSeconds());
+        logger.info("Execution: {} sec", duration.getSeconds());
     }
 }
