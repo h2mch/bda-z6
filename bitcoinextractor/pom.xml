@@ -44,8 +44,34 @@
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.25</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-streams</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 
-
+        <!-- Dependencies below are required/recommended only when using Apache Avro.
+                <dependency>
+                    <groupId>io.confluent</groupId>
+                    <artifactId>kafka-avro-serializer</artifactId>
+                    <version>3.0.0</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.avro</groupId>
+                    <artifactId>avro</artifactId>
+                    <version>1.7.7</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.avro</groupId>
+                    <artifactId>avro-maven-plugin</artifactId>
+                    <version>1.7.7</version>
+                </dependency>
+         -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
