@@ -30,7 +30,8 @@ public class Extractor {
 
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Extractor.class);
 
-    private static final String BITCOIN_BLOCKS = "D:\\docker-share\\bitcoin\\blocks\\";
+    //private static final String BITCOIN_BLOCKS = "D:\\docker-share\\bitcoin\\blocks\\";
+    private static final String BITCOIN_BLOCKS = "src\\main\\resources";
 
     public static void main(String[] args) {
         Instant startTime = Instant.now();
@@ -43,7 +44,7 @@ public class Extractor {
             StreamSupport.stream(directoryStream.spliterator(), false)
                     .filter(Files::isRegularFile)
                     .filter(path -> path.getFileName().toString().endsWith("dat"))
-                    .filter(path -> path.getFileName().toString().startsWith("blk"))
+                    .filter(path -> path.getFileName().toString().startsWith("blk01"))
                     .forEach(path -> blockChainFiles.add(path.toFile()));
         } catch (IOException e) {
             e.printStackTrace();
@@ -97,11 +98,13 @@ public class Extractor {
                 }
             }
         } catch (Exception ex) {
+            String date = "";
+            if (lastBlock != null) {
+                LocalDate localDate = lastBlock.getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                date = localDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+            }
+            logger.error("Error after {} and blocknumber '{}'", date, blockcount, ex);
 
-            LocalDate localDate = lastBlock.getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            String date = localDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
-            logger.error("Error after {} and blocknumber '{}'", date, blockcount);
-            logger.error(lastBlock.toString());
         }
 
 

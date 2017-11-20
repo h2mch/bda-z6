@@ -1,12 +1,13 @@
 version: '2'
 services:
   zookeeper:
-# Should work also without Zookeeper
+    container_name: zookeeper
     image: wurstmeister/zookeeper
     ports:
       - "2181:2181"
   kafka:
-    build: .
+    container_name: kafka
+    build: kafka/.
     ports:
       - "9092:9092"
     environment:
@@ -15,3 +16,12 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+  cassandra:
+    container_name: cassandra
+    image: cassandra:3.11.0
+    ports:
+      - "7000:7000" # Cluster Communication
+      - "9042:9042" # Native protocol clients
+      - "7199:7199" # JMX 
+    #volumes: 
+      #- /sources/...:/var/lib/cassandra
