@@ -10,7 +10,7 @@ public class CassandraConnector {
     private Session session;
 
     public CassandraConnector(String node, int port) {
-        this.connect("docker", 9042);
+        this.connect(node, port);
         this.session = getSession();
     }
 

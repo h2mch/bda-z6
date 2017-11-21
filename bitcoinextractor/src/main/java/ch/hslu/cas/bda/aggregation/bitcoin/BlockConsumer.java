@@ -11,35 +11,38 @@ import java.util.Properties;
 import java.util.UUID;
 
 import ch.hslu.cas.bda.CassandraConnector;
+import ch.hslu.cas.bda.ingestion.bitcoin.BlockTransactionExtractor;
 
 public class BlockConsumer {
+
+
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BlockTransactionExtractor.class);
 
     public static void main(final String[] args) throws Exception {
         Properties settings = new Properties();
         settings.put(StreamsConfig.APPLICATION_ID_CONFIG, "bda-z6.bitcoin.consumer.block");
         settings.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "docker:9092");
-        settings.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
-        settings.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+        settings.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Long().getClass());
+        settings.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Integer().getClass());
 
         // Create an instance of StreamsConfig from the Properties instance
         StreamsConfig config = new StreamsConfig(settings);
 
+
         StreamsBuilder builder = new StreamsBuilder();
-        KStream<String, String> bitcoinblockStream = builder.stream("bitcoin.TimeToTxAmount");
+        KStream<Long, Integer> bitcoinblockStream = builder.stream("bitcoin.TimeToTxAmount");
 
 
         CassandraConnector client = new CassandraConnector("docker", 9042);
         client.createKeyspace("bitcoin");
-
-        String query = "CREATE TABLE IF NOT EXISTS bitcoin.TimeToTxAmount (id uuid PRIMARY KEY, time text, amount text);";
+        String query = "CREATE TABLE IF NOT EXISTS bitcoin.blocktimeToTxSumAmount (id uuid PRIMARY KEY, time time, amount int);";
         client.execute(query);
-
 
         bitcoinblockStream.foreach((time, amount) -> {
 
-            String insertQuery = "INSERT INTO TimeToTxAmount " +
+            String insertQuery = "INSERT INTO bitcoin.blocktimeToTxSumAmount " +
                     "(id, time, amount) VALUES " +
-                    "(" + UUID.randomUUID().toString() + ", '" + time.toString() + "', '" + amount + "');";
+                    "(" + UUID.randomUUID().toString() + ", '" + time + "', '" + amount + "');";
             client.execute(insertQuery);
         });
 
