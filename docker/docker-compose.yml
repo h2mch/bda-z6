@@ -18,10 +18,12 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
   cassandra:
     container_name: cassandra
-    image: cassandra:3.11.0
+    build: cassandra/.
     ports:
       - "7000:7000" # Cluster Communication
       - "9042:9042" # Native protocol clients
-      - "7199:7199" # JMX 
-    #volumes: 
-      #- /sources/...:/var/lib/cassandra
+      - "7199:7199" # JMX
+    environment:
+      - CASSANDRA_CLUSTER_NAME=bitcoin 
+    volumes: 
+      - /source/CAS-BDA/share/cassandra:/var/lib/cassandra
