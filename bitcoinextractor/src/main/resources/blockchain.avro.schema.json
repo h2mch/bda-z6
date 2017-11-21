@@ -1,0 +1,149 @@
+{
+  "type": "record",
+  "name": "transaction",
+  "namespace": "bitcoin",
+  "fields": [
+    {
+      "name": "lock_time",
+      "type": "long"
+    },
+    {
+      "name": "ver",
+      "type": "int"
+    },
+    {
+      "name": "size",
+      "type": "long"
+    },
+    {
+      "name": "inputs",
+      "type": [
+        "null",
+        {
+          "type": "array",
+          "items": {
+            "type": "record",
+            "name": "input",
+            "fields": [
+              {
+                "name": "sequence",
+                "type": "long"
+              },
+              {
+                "name": "prev_out",
+                "type": {
+                  "type": "record",
+                  "name": "output",
+                  "fields": [
+                    {
+                      "name": "addr_tag_link",
+                      "type": [
+                        "null",
+                        "string"
+                      ],
+                      "default": null
+                    },
+                    {
+                      "name": "addr_tag",
+                      "type": [
+                        "null",
+                        "string"
+                      ],
+                      "default": null
+                    },
+                    {
+                      "name": "spent",
+                      "type": "boolean"
+                    },
+                    {
+                      "name": "tx_index",
+                      "type": "long"
+                    },
+                    {
+                      "name": "type",
+                      "type": "int"
+                    },
+                    {
+                      "name": "addr",
+                      "type": [
+                        "null",
+                        "string"
+                      ],
+                      "default": null
+                    },
+                    {
+                      "name": "value",
+                      "type": "long"
+                    },
+                    {
+                      "name": "n",
+                      "type": "int"
+                    },
+                    {
+                      "name": "script",
+                      "type": "string"
+                    }
+                  ],
+                  "connect.doc": "The output instance part of a transaction.",
+                  "connect.name": "datamountaineer.blockchain.output"
+                },
+                "doc": "The output instance part of a transaction."
+              },
+              {
+                "name": "script",
+                "type": "string"
+              }
+            ],
+            "connect.doc": "The input instance part of a transaction.",
+            "connect.name": "datamountaineer.blockchain.input"
+          }
+        }
+      ],
+      "default": null
+    },
+    {
+      "name": "rbf",
+      "type": [
+        "null",
+        "boolean"
+      ],
+      "default": null
+    },
+    {
+      "name": "time",
+      "type": "long"
+    },
+    {
+      "name": "tx_index",
+      "type": "long"
+    },
+    {
+      "name": "vin_sz",
+      "type": "int"
+    },
+    {
+      "name": "hash",
+      "type": "string"
+    },
+    {
+      "name": "vout_sz",
+      "type": "int"
+    },
+    {
+      "name": "relayed_by",
+      "type": "string"
+    },
+    {
+      "name": "out",
+      "type": [
+        "null",
+        {
+          "type": "array",
+          "items": "output"
+        }
+      ],
+      "default": null
+    }
+  ],
+  "connect.name": "bitcoin.block.transaction"
+}
