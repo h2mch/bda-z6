@@ -26,4 +26,4 @@ services:
     environment:
       - CASSANDRA_CLUSTER_NAME=bitcoin 
     volumes: 
-      - /source/CAS-BDA/share/cassandra:/var/lib/cassandra
+      - /tmp:/var/lib/cassandra

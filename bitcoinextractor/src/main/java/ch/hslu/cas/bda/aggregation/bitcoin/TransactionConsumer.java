@@ -32,13 +32,13 @@ public class TransactionConsumer {
 
         CassandraConnector client = new CassandraConnector("docker", 9042);
         client.createKeyspace("bitcoin");
-        String query = "CREATE TABLE IF NOT EXISTS bitcoin.txtoTime (id uuid PRIMARY KEY, time time, hash varchar);";
+        String query = "CREATE TABLE IF NOT EXISTS bitcoin.TxToTime (id uuid PRIMARY KEY, unixtimestamp bigint, hash varchar);";
         client.execute(query);
 
         bitcoinTxToTimeStream.foreach((hash, time) -> {
             String insertQuery = "INSERT INTO bitcoin.TxToTime " +
-                    "(id, time, hash) VALUES " +
-                    "(" + UUID.randomUUID().toString() + ", '" + time + "', '" + hash + "');";
+                    "(id, unixtimestamp, hash) VALUES " +
+                    "(" + UUID.randomUUID().toString() + ", " + time + ", '" + hash + "');";
             client.execute(insertQuery);
         });
 

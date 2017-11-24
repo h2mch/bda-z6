@@ -49,7 +49,7 @@ public class BlockTransactionExtractor {
 
         try {
             Properties settings = new Properties();
-            settings.put(StreamsConfig.APPLICATION_ID_CONFIG, "bda-z6.bitcoin.producer");
+//            settings.put(StreamsConfig.APPLICATION_ID_CONFIG, "bda-z6.bitcoin.producer");
             settings.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "docker:9092");
 
             Producer<Long, Integer> prodTimeToTxAmount = new KafkaProducer<>(settings, new LongSerializer(), new IntegerSerializer());

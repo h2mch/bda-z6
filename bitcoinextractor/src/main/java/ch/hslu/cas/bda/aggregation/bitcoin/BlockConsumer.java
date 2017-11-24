@@ -35,14 +35,15 @@ public class BlockConsumer {
 
         CassandraConnector client = new CassandraConnector("docker", 9042);
         client.createKeyspace("bitcoin");
-        String query = "CREATE TABLE IF NOT EXISTS bitcoin.blocktimeToTxSumAmount (id uuid PRIMARY KEY, time time, amount int);";
+        String query = "CREATE TABLE IF NOT EXISTS bitcoin.BlocktimeToTxSumAmount (id uuid PRIMARY KEY, unixtimestamp bigint, amount int);";
         client.execute(query);
+
 
         bitcoinblockStream.foreach((time, amount) -> {
 
-            String insertQuery = "INSERT INTO bitcoin.blocktimeToTxSumAmount " +
-                    "(id, time, amount) VALUES " +
-                    "(" + UUID.randomUUID().toString() + ", '" + time + "', '" + amount + "');";
+            String insertQuery = "INSERT INTO bitcoin.BlocktimeToTxSumAmount " +
+                    "(id, unixtimestamp, amount) VALUES " +
+                    "(" + UUID.randomUUID().toString() + ", " + time + ", " + amount + ");";
             client.execute(insertQuery);
         });
 
