@@ -26,4 +26,16 @@ services:
     environment:
       - CASSANDRA_CLUSTER_NAME=bitcoin 
     volumes: 
-      - /tmp:/var/lib/cassandra
+      - /tmp/cassandra:/var/lib/cassandra
+  influx:
+    container_name: influx
+    image: tutum/influxdb
+    ports:
+      - "8083:8083"
+      - "8086:8086"
+      - "8090:8090"
+      - "8099:8099"
+    environment:
+      - CASSANDRA_CLUSTER_NAME=bitcoin 
+    volumes: 
+      - /tmp/influxdb:/data    

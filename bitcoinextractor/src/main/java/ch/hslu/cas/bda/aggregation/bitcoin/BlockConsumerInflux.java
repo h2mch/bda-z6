@@ -38,10 +38,12 @@ public class BlockConsumerInflux {
 
             bitcoinblockStream.foreach((time, amount) -> {
 
-                Point point1 = Point.measurement("TimeToTxAmount")
-                        .time(time, TimeUnit.SECONDS)
-                        .addField("amount", amount)
+                Point point1 = Point
+                        .measurement("TimeToTxAmount")  //conceptually matches the idea of a SQL table
+                        .time(time, TimeUnit.SECONDS)   //*the* timestamp
+                        .addField("amount", amount)  //tags: key/value pair of the data
                         .build();
+
 
                 influxConnector.write(point1);
             });
