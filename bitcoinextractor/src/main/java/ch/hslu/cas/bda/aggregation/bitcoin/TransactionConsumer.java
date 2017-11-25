@@ -6,8 +6,6 @@ import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.Materialized;
-import org.apache.kafka.streams.kstream.Produced;
 
 import java.util.Properties;
 import java.util.UUID;
@@ -30,17 +28,18 @@ public class TransactionConsumer {
         KStream<String, Long> bitcoinTxToTimeStream = builder.stream("bitcoin.TxToTime");
 
 
-        CassandraConnector client = new CassandraConnector("docker", 9042);
-        client.createKeyspace("bitcoin");
-        String query = "CREATE TABLE IF NOT EXISTS bitcoin.TxToTime (id uuid PRIMARY KEY, unixtimestamp bigint, hash varchar);";
-        client.execute(query);
+        try (CassandraConnector client = new CassandraConnector("docker", 9042)) {
+            client.createKeyspace("bitcoin");
+            String query = "CREATE TABLE IF NOT EXISTS bitcoin.TxToTime (id uuid PRIMARY KEY, unixtimestamp bigint, hash varchar);";
+            client.execute(query);
 
-        bitcoinTxToTimeStream.foreach((hash, time) -> {
-            String insertQuery = "INSERT INTO bitcoin.TxToTime " +
-                    "(id, unixtimestamp, hash) VALUES " +
-                    "(" + UUID.randomUUID().toString() + ", " + time + ", '" + hash + "');";
-            client.execute(insertQuery);
-        });
+            bitcoinTxToTimeStream.foreach((hash, time) -> {
+                String insertQuery = "INSERT INTO bitcoin.TxToTime " +
+                        "(id, unixtimestamp, hash) VALUES " +
+                        "(" + UUID.randomUUID().toString() + ", " + time + ", '" + hash + "');";
+                client.execute(insertQuery);
+            });
+        }
 
         Topology topology = builder.build();
         KafkaStreams streams = new KafkaStreams(topology, config);

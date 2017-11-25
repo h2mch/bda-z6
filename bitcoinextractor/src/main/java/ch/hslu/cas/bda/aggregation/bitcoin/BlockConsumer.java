@@ -33,20 +33,20 @@ public class BlockConsumer {
         KStream<Long, Integer> bitcoinblockStream = builder.stream("bitcoin.TimeToTxAmount");
 
 
-        CassandraConnector client = new CassandraConnector("docker", 9042);
-        client.createKeyspace("bitcoin");
-        String query = "CREATE TABLE IF NOT EXISTS bitcoin.BlocktimeToTxSumAmount (id uuid PRIMARY KEY, unixtimestamp bigint, amount int);";
-        client.execute(query);
+        try (CassandraConnector client = new CassandraConnector("docker", 9042)) {
+            client.createKeyspace("bitcoin");
+            String query = "CREATE TABLE IF NOT EXISTS bitcoin.BlocktimeToTxSumAmount (id uuid PRIMARY KEY, unixtimestamp bigint, amount int);";
+            client.execute(query);
 
 
-        bitcoinblockStream.foreach((time, amount) -> {
+            bitcoinblockStream.foreach((time, amount) -> {
 
-            String insertQuery = "INSERT INTO bitcoin.BlocktimeToTxSumAmount " +
-                    "(id, unixtimestamp, amount) VALUES " +
-                    "(" + UUID.randomUUID().toString() + ", " + time + ", " + amount + ");";
-            client.execute(insertQuery);
-        });
-
+                String insertQuery = "INSERT INTO bitcoin.BlocktimeToTxSumAmount " +
+                        "(id, unixtimestamp, amount) VALUES " +
+                        "(" + UUID.randomUUID().toString() + ", " + time + ", " + amount + ");";
+                client.execute(insertQuery);
+            });
+        }
 
         Topology topology = builder.build();
         KafkaStreams streams = new KafkaStreams(topology, config);

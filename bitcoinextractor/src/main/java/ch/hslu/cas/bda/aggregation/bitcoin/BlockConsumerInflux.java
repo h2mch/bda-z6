@@ -32,19 +32,20 @@ public class BlockConsumerInflux {
         StreamsBuilder builder = new StreamsBuilder();
         KStream<Long, Integer> bitcoinblockStream = builder.stream("bitcoin.TimeToTxAmount");
 
-        InfluxConnector influxConnector = new InfluxConnector("docker", 8086);
-        String dbName = "BlocktimeToTxSumAmount";
-        influxConnector.createDB(dbName);
+        try (InfluxConnector influxConnector = new InfluxConnector("docker", 8086)) {
+            String dbName = "BlocktimeToTxSumAmount";
+            influxConnector.createDB(dbName);
 
-        bitcoinblockStream.foreach((time, amount) -> {
+            bitcoinblockStream.foreach((time, amount) -> {
 
-            Point point1 = Point.measurement("TimeToTxAmount")
-                    .time(time, TimeUnit.SECONDS)
-                    .addField("amount", amount)
-                    .build();
+                Point point1 = Point.measurement("TimeToTxAmount")
+                        .time(time, TimeUnit.SECONDS)
+                        .addField("amount", amount)
+                        .build();
 
-            influxConnector.write(point1);
-        });
+                influxConnector.write(point1);
+            });
+        }
 
         Topology topology = builder.build();
         KafkaStreams streams = new KafkaStreams(topology, config);
