@@ -21,3 +21,13 @@ select * from SERIESNAME limit 1
 
 field names should be alphanumeric with maybe few special chars such as _ to avoid any issues
 ```
+
+# Java
+https://github.com/influxdata/influxdb-java
+
+
+# tableau
+https://tagyoureit.github.io/InfluxDB_WDC/
+
+# RStudio
+see /../R/Intro/InfluxDB.R
