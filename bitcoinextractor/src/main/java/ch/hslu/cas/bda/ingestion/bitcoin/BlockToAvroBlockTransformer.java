@@ -22,7 +22,7 @@ public class BlockToAvroBlockTransformer implements IBlockProcessor {
 
     private static final String BITCOIN_BLOCKS = "/Users/had/Library/Application Support/Bitcoin/blocks/";
 
-    public static void main(String[] args) throws IOException{
+    public static void main(String[] args) throws IOException {
 
         List<File> blockChainFiles = new ArrayList<>();
 
@@ -41,7 +41,7 @@ public class BlockToAvroBlockTransformer implements IBlockProcessor {
     @Override
     public void process(long blockCount, Block block) throws IOException {
         String filename = BITCOIN_AVRO_FILES + "msg" + String.format("%09d", blockCount);
-        AvBlock avBlock = new BlockConverter().toAvBlock(block);
-        new AvBlockSerializer().toFile(avBlock, AvBlock.class,  filename);
+        AvBlock avBlock = new BlockConverter().toAvBlock(block, blockCount);
+        new AvBlockSerializer().toFile(avBlock, AvBlock.class, filename);
     }
 }

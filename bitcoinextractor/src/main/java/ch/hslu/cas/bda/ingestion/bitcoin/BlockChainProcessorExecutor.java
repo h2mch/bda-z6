@@ -45,7 +45,7 @@ public class BlockChainProcessorExecutor {
                 txCount += block.getTransactions().size();
 
                 try {
-                    processor.process(blockCount, block);
+                    processor.process(blockCount - 1, block);
                 } catch (Exception e) {
                     System.err.println("Error processing block " + blockCount);
                     System.err.println("Block Hash: " + block.getHash().toString());

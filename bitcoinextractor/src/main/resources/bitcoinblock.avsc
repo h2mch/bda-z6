@@ -1,6 +1,5 @@
 [
   {
-
     "type": "record",
     "name": "AvTransaction",
     "namespace": "ch.hslu.cas.bda.message.bitcoin",
@@ -70,7 +69,10 @@
     "fields": [
       {
         "name": "transactions",
-        "type": {"type": "array", "items": "AvTransaction"}
+        "type": {
+          "type": "array",
+          "items": "AvTransaction"
+        }
       },
       {
         "name": "blockHash",
@@ -90,6 +92,10 @@
       },
       {
         "name": "version",
+        "type": "long"
+      },
+      {
+        "name": "blockNo",
         "type": "long"
       }
     ]

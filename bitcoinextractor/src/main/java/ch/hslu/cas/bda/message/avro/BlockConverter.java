@@ -15,18 +15,19 @@ import java.util.stream.Collectors;
 
 public class BlockConverter {
 
-    public AvBlock toAvBlock(Block block) {
-        AvBlock message = new AvBlock();
-        message.setBlockHash(block.getHashAsString());
-        message.setTime(block.getTimeSeconds());
-        message.setVersion(block.getVersion());
-        message.setDifficultyTarget(block.getDifficultyTarget());
-        message.setPreviousBlockHash(block.getPrevBlockHash().toString());
+    public AvBlock toAvBlock(Block block, long blockNo) {
+        AvBlock avBlock = new AvBlock();
+        avBlock.setBlockHash(block.getHashAsString());
+        avBlock.setTime(block.getTimeSeconds());
+        avBlock.setVersion(block.getVersion());
+        avBlock.setDifficultyTarget(block.getDifficultyTarget());
+        avBlock.setPreviousBlockHash(block.getPrevBlockHash().toString());
 
-        message.setTransactions(block.getTransactions().
+        avBlock.setTransactions(block.getTransactions().
                 stream().map(BlockConverter::toAvTransactionMessage).collect(Collectors.toList()));
 
-        return message;
+        avBlock.setBlockNo(blockNo);
+        return avBlock;
     }
 
     private static AvTransaction toAvTransactionMessage(Transaction tx) {
