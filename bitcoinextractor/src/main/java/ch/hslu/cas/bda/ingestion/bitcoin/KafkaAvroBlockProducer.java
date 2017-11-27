@@ -65,7 +65,7 @@ public class KafkaAvroBlockProducer implements IBlockProcessor {
 
         try {
             AvBlock avBlock = new BlockConverter().toAvBlock(block, blockCount);
-            byte[] byteBlock = new AvroSerializer().toByteArray(avBlock, AvBlock.class);
+            byte[] byteBlock = new AvroSerializer<AvBlock>().toByteArray(avBlock, AvBlock.class);
             ProducerRecord<String, byte[]> record = new ProducerRecord<>("bitcoinblock", byteBlock);
             blockProducer.send(record).get();
         } catch (Exception e) {

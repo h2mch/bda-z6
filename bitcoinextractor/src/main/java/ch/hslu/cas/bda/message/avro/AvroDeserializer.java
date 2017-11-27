@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public class AvroDeserializer<T> {
 
-    public T fromFile(String filename, Class clazz) throws IOException {
+    public T fromFile(String filename, Class<T> clazz) throws IOException {
         DatumReader<T> datumReader = new SpecificDatumReader<>(clazz);
         try (DataFileReader<T> dataFileReader = new DataFileReader<>(new File(filename), datumReader)) {
             T obj = dataFileReader.next();
@@ -19,7 +19,7 @@ public class AvroDeserializer<T> {
         }
     }
 
-    public T fromByteArray(byte[] bytes, Class clazz) throws IOException {
+    public T fromByteArray(byte[] bytes, Class<T> clazz) throws IOException {
         DatumReader<T> datumReader = new SpecificDatumReader<>(clazz);
         Decoder decoder = DecoderFactory.get().binaryDecoder(bytes, null);
         T obj = datumReader.read(null, decoder);
