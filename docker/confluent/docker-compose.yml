@@ -51,6 +51,7 @@ services:
       KAFKA_REST_ZOOKEEPER_CONNECT: "zookeeper:2181"
       KAFKA_REST_HOST_NAME: "kafka-rest"
       KAFKA_REST_LISTENERS: "http://kafka-rest:8080"
+      KAFKA_MESSAGE_MAX_BYTES: 104857600
       KAFKA_REST_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
       SCHEMA_REGISTRY_DEBUG: "true"
 
