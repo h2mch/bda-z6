@@ -86,4 +86,14 @@ services:
       #CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_INTERNAL_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: 'http://schema_registry:8081'
+
+  influx:
+    container_name: influx
+    image: tutum/influxdb
+    hostname: influx
+    ports:
+      - "8085:8083"
+      - "8086:8086"
+      - "8090:8090"
+      - "8099:8099"
       
