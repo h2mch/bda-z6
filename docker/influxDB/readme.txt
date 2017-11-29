@@ -12,15 +12,21 @@ docker pull tutum/influxdb
 docker run -d --name=influx ...
 ```
 
-
 # Influx
+
+## Setup DB
+```bash
+$ influx --host localhost --port 8086
+> CREATE DATABASE devices
+> CREATE USER root WITH PASSWORD 'root'
+> GRANT ALL ON devices to root
+```
+
 ## Get list of fields
-
-```
+```SQL
 select * from SERIESNAME limit 1
-
-field names should be alphanumeric with maybe few special chars such as _ to avoid any issues
 ```
+field names should be alphanumeric with maybe few special chars such as _ to avoid any issues
 
 ## REST
 ```bash
