@@ -1,0 +1,103 @@
+[
+  {
+    "type": "record",
+    "name": "AvTransaction",
+    "namespace": "ch.hslu.cas.bda.message.bitcoin",
+    "fields": [
+      {
+        "name": "version",
+        "type": "long"
+      },
+      {
+        "name": "vin",
+        "type": [
+          "null",
+          {
+            "type": "array",
+            "items": {
+              "type": "record",
+              "name": "Input",
+              "fields": [
+                {
+                  "name": "txid",
+                  "type": "string"
+                },
+                {
+                  "name": "vout",
+                  "type": "long"
+                },
+                {
+                  "name": "sequence",
+                  "type": "long"
+                }
+              ]
+            }
+          }
+        ],
+        "default": null
+      },
+      {
+        "name": "vout",
+        "type": [
+          "null",
+          {
+            "type": "array",
+            "items": {
+              "type": "record",
+              "name": "Output",
+              "fields": [
+                {
+                  "name": "value",
+                  "type": "long"
+                },
+                {
+                  "name": "address",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "default": null
+      }
+    ]
+  },
+  {
+    "type": "record",
+    "name": "AvBlock",
+    "namespace": "ch.hslu.cas.bda.message.bitcoin",
+    "fields": [
+      {
+        "name": "transactions",
+        "type": {
+          "type": "array",
+          "items": "AvTransaction"
+        }
+      },
+      {
+        "name": "blockHash",
+        "type": "string"
+      },
+      {
+        "name": "previousBlockHash",
+        "type": "string"
+      },
+      {
+        "name": "time",
+        "type": "long"
+      },
+      {
+        "name": "difficultyTarget",
+        "type": "long"
+      },
+      {
+        "name": "version",
+        "type": "long"
+      },
+      {
+        "name": "blockNo",
+        "type": "long"
+      }
+    ]
+  }
+]
