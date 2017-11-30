@@ -24,28 +24,28 @@ public class BlockConverter {
         avBlock.setPreviousBlockHash(block.getPrevBlockHash().toString());
 
         avBlock.setTransactions(block.getTransactions().
-                stream().map(BlockConverter::toAvTransactionMessage).collect(Collectors.toList()));
+                stream().map(BlockConverter::toAvTransaction).collect(Collectors.toList()));
 
         avBlock.setBlockNo(blockNo);
         return avBlock;
     }
 
-    private static AvTransaction toAvTransactionMessage(Transaction tx) {
+    private static AvTransaction toAvTransaction(Transaction tx) {
         AvTransaction avTx = new AvTransaction();
 
         avTx.setVersion(tx.getVersion());
         // avTx.setOutputSum(tx.getOutputSum().getValue());
         avTx.setVin(tx.getInputs().
-                stream().map(BlockConverter::toInputMessage).filter(t -> t != null).collect(Collectors.toList()));
+                stream().map(BlockConverter::toInput).filter(t -> t != null).collect(Collectors.toList()));
 
         avTx.setVout(tx.getOutputs().
-                stream().map(BlockConverter::toOutputMessage).filter(t -> t != null).collect(Collectors.toList()));
+                stream().map(BlockConverter::toOutput).filter(t -> t != null).collect(Collectors.toList()));
 
         // avTx.setOutputSum(avTx.getVout().stream().mapToLong(t -> t.getValue()).sum());
         return avTx;
     }
 
-    private static Input toInputMessage(TransactionInput txInput) {
+    private static Input toInput(TransactionInput txInput) {
 
         // Don't treat coin base as a AvTransaction input
         if (txInput.isCoinBase()) {
@@ -63,7 +63,7 @@ public class BlockConverter {
     }
 
 
-    private static Output toOutputMessage(TransactionOutput txOutput) {
+    private static Output toOutput(TransactionOutput txOutput) {
         Output avOutput = new Output();
         avOutput.setValue(txOutput.getValue().getValue());
         Script script = getScript(txOutput.getScriptBytes());
