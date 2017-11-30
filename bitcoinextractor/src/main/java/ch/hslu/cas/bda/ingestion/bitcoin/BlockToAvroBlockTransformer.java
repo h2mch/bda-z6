@@ -1,6 +1,10 @@
 package ch.hslu.cas.bda.ingestion.bitcoin;
 
+import ch.hslu.cas.bda.message.avro.AvroSerializer;
+import ch.hslu.cas.bda.message.avro.BlockConverter;
+import ch.hslu.cas.bda.message.bitcoin.AvBlock;
 import org.bitcoinj.core.Block;
+import org.bitcoinj.core.Transaction;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +42,9 @@ public class BlockToAvroBlockTransformer implements IBlockProcessor {
     @Override
     public void process(long blockCount, Block block) throws IOException {
         String filename = BITCOIN_AVRO_FILES + "msg" + String.format("%09d", blockCount);
-        // AvBlock avBlock = new BlockConverter().toAvBlock(block, blockCount);
-        // new AvroSerializer().toFile(avBlock, AvBlock.class, filename);
+        AvBlock avBlock = new BlockConverter().toAvBlock(block, blockCount);
+        new AvroSerializer().toFile(avBlock, AvBlock.class, filename);
+
     }
 }
+
