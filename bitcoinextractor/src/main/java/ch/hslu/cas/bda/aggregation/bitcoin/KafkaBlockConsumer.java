@@ -25,7 +25,8 @@ public class KafkaBlockConsumer {
     public KafkaBlockConsumer() {
         //consumer properties
         Properties settings = new Properties();
-        settings.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        // settings.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "z6vm1.westeurope.cloudapp.azure.com:9092");
+        settings.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "docker:9092");
         settings.put(ConsumerConfig.GROUP_ID_CONFIG, UUID.randomUUID().toString());
         settings.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         settings.put(ConsumerConfig.CLIENT_ID_CONFIG, "BitcoinBlockConsumer");
@@ -45,7 +46,7 @@ public class KafkaBlockConsumer {
 
     public void start() {
 
-        consumer.subscribe(Arrays.asList("bitcoinblock"));
+        consumer.subscribe(Arrays.asList("bitcoin.block"));
 
         while (true) {
             ConsumerRecords<String, byte[]> records = consumer.poll(100L);

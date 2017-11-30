@@ -4,7 +4,6 @@ import ch.hslu.cas.bda.message.avro.AvroSerializer;
 import ch.hslu.cas.bda.message.avro.BlockConverter;
 import ch.hslu.cas.bda.message.bitcoin.AvBlock;
 import org.bitcoinj.core.Block;
-import org.bitcoinj.core.Transaction;
 
 import java.io.File;
 import java.io.IOException;
