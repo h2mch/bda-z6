@@ -69,27 +69,11 @@ InfluxDB shell version: 1.0.0
 ```
 
 ## Kafka Connect Bash
-not retested!
+Login into kafka connect
 ```bash
 hem@zrhn1810 MINGW64 /c/source/CAS-BDA/docker/confluent (master)
 $ docker exec -it kafka-connect /bin/bash
-
-root@kafka-connect:/# echo "#Connector name=influx-sink \
-> name=influxdb-sink \
-> connector.class=com.datamountaineer.streamreactor.connect.influx.InfluxSinkConnector \
-> tasks.max=1 \
-> topics=influx-topic \
-> connect.influx.kcql=INSERT INTO myTable SELECT * FROM influx-topic WITHTIMESTAMP sys_time() \
-> connect.influx.url=http://influx:8086 \
-> connect.influx.db=myFoo" >> /etc/kafka-connect-influx/influxdb-sink.properties
-
-
-/usr/bin/connect-distributed
-/usr/bin/connect-standalone
-
-root@kafka-connect:/# root@kafka-connect:/tmp# wget https://github.com/Landoop/kafka-connect-tools/releases/download/v1.0.5/connect-cli
 ```
-
 
 ### Install InfluxDB Sink
 Build InfluxDB Sink from Source
