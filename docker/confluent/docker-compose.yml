@@ -57,8 +57,9 @@ services:
 
   kafka-connect:
     container_name: kafka-connect
+    build: kafka-connect/.
+    # image: confluentinc/cp-kafka-connect
     hostname: kafka-connect
-    image: confluentinc/cp-kafka-connect
     depends_on:
       - zookeeper
       - kafka
@@ -78,15 +79,16 @@ services:
       CONNECT_STATUS_STORAGE_TOPIC: "bitcoin-status"
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
       #CONNECT_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-      CONNECT_KEY_CONVERTER: io.confluent.connect.avro.AvroConverter
-      CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL: 'http://schema_registry:8081'
+      CONNECT_KEY_CONVERTER: "io.confluent.connect.avro.AvroConverter"
+      CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL: "http://schema_registry:8081"
       #CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-      CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
+      CONNECT_VALUE_CONVERTER: "io.confluent.connect.avro.AvroConverter"
       #CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-      CONNECT_INTERNAL_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       #CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-      CONNECT_INTERNAL_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
-      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: 'http://schema_registry:8081'
+      CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: "http://schema_registry:8081"
+      CONNECT_PLUGIN_PATH: "/usr/local/share/kafka/plugins"
 
   influx:
     container_name: influx
@@ -97,4 +99,7 @@ services:
       - "8086:8086"
       - "8090:8090"
       - "8099:8099"
+    #volumes: 
+    #  - /tmp/influxdb:/data
+    #  - influxdb:/var/lib/influxdb
       
