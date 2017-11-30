@@ -39,10 +39,20 @@ public class BlockToAvroBlockTransformer implements IBlockProcessor {
     }
 
     @Override
+    public void onStart() {
+
+    }
+
+    @Override
     public void process(long blockCount, Block block) throws IOException {
         String filename = BITCOIN_AVRO_FILES + "msg" + String.format("%09d", blockCount);
         AvBlock avBlock = new BlockConverter().toAvBlock(block, blockCount);
         new AvroSerializer().toFile(avBlock, AvBlock.class, filename);
+
+    }
+
+    @Override
+    public void onEnd() {
 
     }
 }

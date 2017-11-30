@@ -1,6 +1,5 @@
 package ch.hslu.cas.bda.ingestion.bitcoin;
 
-import ch.hslu.cas.bda.message.avro.AvroSerializer;
 import ch.hslu.cas.bda.message.avro.BlockConverter;
 import ch.hslu.cas.bda.message.bitcoin.AvBlock;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -21,11 +20,10 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.StreamSupport;
 
-
 public class KafkaAvroBlockProducer implements IBlockProcessor {
 
     private static final String BITCOIN_BLOCKS = "/Users/had/Library/Application Support/Bitcoin/blocks/";
-    private final Producer<String, byte[]> blockProducer;
+    private Producer<String, AvBlock> blockProducer;
 
     public static void main(String[] args) throws IOException {
 
@@ -43,7 +41,9 @@ public class KafkaAvroBlockProducer implements IBlockProcessor {
         processor.processBlocks(blockChainFiles);
     }
 
-    public KafkaAvroBlockProducer() {
+
+    @Override
+    public void onStart() {
         Properties settings = new Properties();
         settings.put(StreamsConfig.APPLICATION_ID_CONFIG, "bda-z6.bitcoin.producer");
         //settings.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "z6vm1.westeurope.cloudapp.azure.com:9092");
@@ -52,25 +52,36 @@ public class KafkaAvroBlockProducer implements IBlockProcessor {
         settings.put(ProducerConfig.BATCH_SIZE_CONFIG, 100000);
         settings.put(ProducerConfig.CLIENT_ID_CONFIG, "BitcoinBlockProducer");
 
-        settings.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
-        settings.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArraySerializer");
+        settings.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
+                io.confluent.kafka.serializers.KafkaAvroSerializer.class);
+        settings.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+                io.confluent.kafka.serializers.KafkaAvroSerializer.class);
+
+        settings.put("schema.registry.url", "http://docker:8081");
+
         settings.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, 104857600);
 
         blockProducer = new KafkaProducer<>(settings);
-
     }
 
     @Override
     public void process(long blockCount, Block block) throws IOException {
 
-
         try {
             AvBlock avBlock = new BlockConverter().toAvBlock(block, blockCount);
-            byte[] byteBlock = new AvroSerializer<AvBlock>().toByteArray(avBlock, AvBlock.class);
-            ProducerRecord<String, byte[]> record = new ProducerRecord<>("bitcoin.block", byteBlock);
+            ProducerRecord<String, AvBlock> record = new ProducerRecord<>("bitcoin.block", avBlock);
             blockProducer.send(record).get();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onEnd() {
+        try {
+            blockProducer.flush();
+        } finally {
+            blockProducer.close();
         }
     }
 }

@@ -40,6 +40,8 @@ public class BlockChainProcessorExecutor {
         try {
             long procStartTime = System.currentTimeMillis();
 
+            processor.onStart();
+
             for (Block block : blockFileLoader) {
                 blockCount++;
                 txCount += block.getTransactions().size();
@@ -65,6 +67,8 @@ public class BlockChainProcessorExecutor {
                     txCount = 0;
                 }
             }
+
+            processor.onEnd();
         } catch (Exception ex) {
             ex.printStackTrace();
         }

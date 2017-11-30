@@ -1,7 +1,7 @@
 package ch.hslu.cas.bda.aggregation.bitcoin;
 
-import ch.hslu.cas.bda.message.avro.AvroDeserializer;
 import ch.hslu.cas.bda.message.bitcoin.AvBlock;
+import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public class KafkaBlockConsumer {
 
-    private final KafkaConsumer<String, byte[]> consumer;
+    private final KafkaConsumer<String, AvBlock> consumer;
 
     public static void main(String[] args) {
 
@@ -23,7 +23,7 @@ public class KafkaBlockConsumer {
     }
 
     public KafkaBlockConsumer() {
-        //consumer properties
+
         Properties settings = new Properties();
         // settings.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "z6vm1.westeurope.cloudapp.azure.com:9092");
         settings.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "docker:9092");
@@ -38,8 +38,14 @@ public class KafkaBlockConsumer {
         // settings.put(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, 1000);
         // settings.put("enable.auto.commit", "true");
 
-        settings.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        settings.put("value.deserializer", "org.apache.kafka.common.serialization.ByteArrayDeserializer");
+        settings.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
+                io.confluent.kafka.serializers.KafkaAvroDeserializer.class);
+        settings.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
+                io.confluent.kafka.serializers.KafkaAvroDeserializer.class);
+        settings.put("schema.registry.url", "http://docker:8081");
+
+        // Use Specific Record or else you get Avro GenericRecord.
+        settings.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, "true");
 
         consumer = new KafkaConsumer<>(settings);
     }
@@ -49,11 +55,11 @@ public class KafkaBlockConsumer {
         consumer.subscribe(Arrays.asList("bitcoin.block"));
 
         while (true) {
-            ConsumerRecords<String, byte[]> records = consumer.poll(100L);
-            for (ConsumerRecord<String, byte[]> record : records) {
+            ConsumerRecords<String, AvBlock> records = consumer.poll(100L);
+            for (ConsumerRecord<String, AvBlock> record : records) {
                 try {
 
-                    AvBlock block = new AvroDeserializer<AvBlock>().fromByteArray(record.value(), AvBlock.class);
+                    AvBlock block = record.value();
                     long mined = block.getTransactions().get(0).getVout().stream().mapToLong(o -> o.getValue()).sum();
                     if (block.getBlockNo() % 10000 == 0) {
                         System.out.println(String.format("Record offset: %6d  Block: %6d  Mined+Fees: %10d  Hash: %s", record.offset(), block.getBlockNo(), mined, block.getBlockHash()));
