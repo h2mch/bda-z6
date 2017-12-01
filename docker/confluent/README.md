@@ -69,7 +69,34 @@ InfluxDB shell version: 1.0.0
 ```
 or via REST
 ### REST
+
+Create DB
 http://docker:8086/query?q=CREATE DATABASE myFoo
+
+
+## Influx
+### REST
+Create Datasource
+```bash
+curl -X POST \
+  http://docker:3000/api/datasources \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/json' \
+  -d '    {
+        "name": "bitcoin",
+        "type": "influxdb",
+        "typeLogoUrl": "public/app/plugins/datasource/influxdb/img/influxdb_logo.svg",
+        "access": "direct",
+        "url": "http://docker:8086",
+        "password": "root",
+        "user": "root",
+        "database": "bitcoin",
+        "basicAuth": false,
+        "isDefault": true,
+        "jsonData": {}
+    }' 
+```
+
 
 
 ## Kafka Connect Bash
