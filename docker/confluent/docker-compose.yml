@@ -114,14 +114,14 @@ services:
     image: tutum/grafana
     hostname: grafana
     ports:
-      - "3000:80"
+      - "80:80"
     links:
       - influx
     environment:
       HTTP_USER: "admin"
       HTTP_PASS: "admin"
       INFLUXDB_PROTO: "http"
-      INFLUXDB_HOST: "influx"
+      INFLUXDB_HOST: "docker"
       INFLUXDB_PORT: "8086"
       INFLUXDB_NAME: "bitcoin"
       INFLUXDB_USER: "root"
