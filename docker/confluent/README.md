@@ -54,8 +54,8 @@ $ curl -X GET \
 
 
 
-## Influx Bash
-
+## Influx
+### Bash
 Create new DB
 ```bash
 hem@zrhn1810 MINGW64 /c/source/CAS-BDA/docker/confluent (master)
@@ -67,6 +67,10 @@ InfluxDB shell version: 1.0.0
 > CREATE DATABASE myFoo
 >
 ```
+or via REST
+### REST
+http://docker:8086/query?q=CREATE DATABASE myFoo
+
 
 ## Kafka Connect Bash
 Login into kafka connect
@@ -95,10 +99,10 @@ curl -X POST \
   "config": {
     "connector.class": "com.datamountaineer.streamreactor.connect.influx.InfluxSinkConnector",
     "tasks.max": "1",
-    "topics": "influx-topic",
-    "connect.influx.kcql": "INSERT INTO myTable SELECT * FROM influx-topic WITHTIMESTAMP sys_time()",
+    "topics": "bitcoin.block",
+    "connect.influx.kcql": "INSERT INTO block SELECT time, difficultyTarget, version, blockNo, blockHash FROM influx-topic WITHTIMESTAMP time",
 	"connect.influx.url": "http://influx:8086",
-	"connect.influx.db": "myFoo",
+	"connect.influx.db": "bitcoin",
 	"connect.influx.username": "admin",
 	"connect.influx.password": "admin"
   }

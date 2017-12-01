@@ -20,7 +20,8 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://192.168.99.100:9092"
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092"
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   schema-registry:
@@ -80,14 +81,14 @@ services:
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
       #CONNECT_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_KEY_CONVERTER: "io.confluent.connect.avro.AvroConverter"
-      CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL: "http://schema_registry:8081"
+      CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
       #CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_VALUE_CONVERTER: "io.confluent.connect.avro.AvroConverter"
       #CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       #CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: "http://schema_registry:8081"
+      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
       CONNECT_PLUGIN_PATH: "/usr/local/share/kafka/plugins"
 
   influx:
@@ -99,7 +100,29 @@ services:
       - "8086:8086"
       - "8090:8090"
       - "8099:8099"
+    environment:
+      PRE_CREATE_DB : "bitcoin;playground"
+      ADMIN_USER : "root"
+      INFLUXDB_INIT_PWD : "root"
+
     #volumes: 
     #  - /tmp/influxdb:/data
     #  - influxdb:/var/lib/influxdb
-      
+
+  grafana:
+    container_name: grafana
+    image: tutum/grafana
+    hostname: grafana
+    ports:
+      - "3000:80"
+    links:
+      - influx
+    environment:
+      HTTP_USER: "admin"
+      HTTP_PASS: "admin"
+      INFLUXDB_PROTO: "http"
+      INFLUXDB_HOST: "influx"
+      INFLUXDB_PORT: "8086"
+      INFLUXDB_NAME: "bitcoin"
+      INFLUXDB_USER: "root"
+      INFLUXDB_PASS: "root"
