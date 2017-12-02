@@ -18,7 +18,7 @@ public class BlockConverter {
     public AvBlock toAvBlock(Block block, long blockNo) {
         AvBlock avBlock = new AvBlock();
         avBlock.setBlockHash(block.getHashAsString());
-        avBlock.setTime(block.getTimeSeconds());
+        avBlock.setTime(block.getTimeSeconds() * 1000);
         avBlock.setVersion(block.getVersion());
         avBlock.setDifficultyTarget(block.getDifficultyTarget());
         avBlock.setPreviousBlockHash(block.getPrevBlockHash().toString());
