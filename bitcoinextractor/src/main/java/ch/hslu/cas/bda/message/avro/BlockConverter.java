@@ -1,9 +1,5 @@
 package ch.hslu.cas.bda.message.avro;
 
-import ch.hslu.cas.bda.message.bitcoin.AvBlock;
-import ch.hslu.cas.bda.message.bitcoin.AvTransaction;
-import ch.hslu.cas.bda.message.bitcoin.Input;
-import ch.hslu.cas.bda.message.bitcoin.Output;
 import org.bitcoinj.core.Block;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
@@ -13,12 +9,17 @@ import org.bitcoinj.script.Script;
 
 import java.util.stream.Collectors;
 
+import ch.hslu.cas.bda.message.bitcoin.AvBlock;
+import ch.hslu.cas.bda.message.bitcoin.AvTransaction;
+import ch.hslu.cas.bda.message.bitcoin.Input;
+import ch.hslu.cas.bda.message.bitcoin.Output;
+
 public class BlockConverter {
 
     public AvBlock toAvBlock(Block block, long blockNo) {
         AvBlock avBlock = new AvBlock();
         avBlock.setBlockHash(block.getHashAsString());
-        avBlock.setTime(block.getTimeSeconds() * 1000);
+        avBlock.setTime(block.getTimeSeconds() * 1000); //influxDB is using UNIX TimeStamp in ms
         avBlock.setVersion(block.getVersion());
         avBlock.setDifficultyTarget(block.getDifficultyTarget());
         avBlock.setPreviousBlockHash(block.getPrevBlockHash().toString());
