@@ -22,9 +22,20 @@ Create new Topic
 ```bash
 root@kafka:/kafka-topics --describe --topic foo --zookeeper zookeeper:2181
 ```
-send Message to this Topic
+Send Message to this Topic
 ```bash
 root@kafka:/# seq 10 | kafka-console-producer --request-required-acks 1 --broker-list zookeeper:2181 --topic foo && echo 'Produced 10 messages.'
+```
+
+Delete Topic
+```bash
+root@kafka:/kafka-topics --delete --topic foo --zookeeper zookeeper:2181
+```
+
+Empty topic workaround (if deletion is not enabled
+)
+```bash
+root@kafka:/kafka-topics --alter --topic foo --config retention.ms=1000 --zookeeper zookeeper:2181
 ```
 
 ## Kafka HTTP
