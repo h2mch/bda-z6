@@ -64,6 +64,10 @@ public class KafkaBlockToInfluxStream {
     }
 
     private AvBlockDatapoint toBlockDatapoint(AvBlock block) {
+        if (block.getBlockNo() % 10000 == 0) {
+            System.out.println("Block: " + block.getBlockNo() + " / " + block.getBlockHash());
+        }
+
         AvBlockDatapoint datapoint = new AvBlockDatapoint();
         datapoint.setBlockNo(block.getBlockNo());
         datapoint.setBlockHash(block.getBlockHash());
