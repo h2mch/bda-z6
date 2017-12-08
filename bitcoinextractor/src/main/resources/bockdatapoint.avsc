@@ -1,0 +1,50 @@
+[
+  {
+    "type": "record",
+    "name": "AvBlockDatapoint",
+    "namespace": "ch.hslu.cas.bda.message.bitcoin",
+    "fields": [
+      {
+        "name": "time",
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      {
+        "name": "blockHash",
+        "type": "string"
+      },
+      {
+        "name": "previousBlockHash",
+        "type": "string"
+      },
+      {
+        "name": "difficulty",
+        "type": "long"
+      },
+      {
+        "name": "version",
+        "type": "long"
+      },
+      {
+        "name": "blockNo",
+        "type": "long"
+      },
+      {
+        "name": "mined",
+        "type": "long"
+      },
+      {
+        "name": "txFees",
+        "type": "long"
+      },
+      {
+        "name": "txVolume",
+        "type": "long"
+      },
+      {
+        "name": "txCount",
+        "type": "int"
+      }
+    ]
+  }
+]
