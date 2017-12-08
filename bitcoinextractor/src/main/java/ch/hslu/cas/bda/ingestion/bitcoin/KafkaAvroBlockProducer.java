@@ -23,8 +23,8 @@ import java.util.stream.StreamSupport;
 public class KafkaAvroBlockProducer implements IBlockProcessor {
 
 
-    private static final String BITCOIN_BLOCKS = "src\\main\\resources";
-    //private static final String BITCOIN_BLOCKS = "/Users/had/Library/Application Support/Bitcoin/blocks/";
+    // private static final String BITCOIN_BLOCKS = "src\\main\\resources";
+    private static final String BITCOIN_BLOCKS = "/Users/had/Library/Application Support/Bitcoin/blocks/";
     private Producer<String, AvBlock> blockProducer;
 
     public static void main(String[] args) throws IOException {
