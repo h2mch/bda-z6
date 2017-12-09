@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.StreamSupport;
 
+@Deprecated
 public class Extractor {
 
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Extractor.class);

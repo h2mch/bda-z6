@@ -4,6 +4,8 @@ import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 
+
+@Deprecated
 public class CassandraConnector implements AutoCloseable {
 
     private Cluster cluster;

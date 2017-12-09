@@ -109,8 +109,8 @@ services:
       INFLUXDB_USER: "root"
       INFLUXDB_USER_PASSWORD: "root"
     # Store the data outside the container
-    # volumes:
-    #  - /home/hem/docker/influxdb:/var/lib/influxdb
+    volumes:
+      - /docker-share/influxdb:/var/lib/influxdb
 
   grafana:
     container_name: grafana
@@ -134,5 +134,5 @@ services:
       INFLUX_DB: "bitcoin"
       INFLUX_URL: "http://docker:8086"
     # Store the data outside the container
-    # volumes:
-    #  - /home/hem/docker/grafana:/var/lib/grafana
+    volumes:
+      - /docker-share/grafana:/var/lib/grafana
