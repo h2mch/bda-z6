@@ -1,14 +1,12 @@
 package ch.hslu.cas.bda.aggregation.bitcoin;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.KStream;
 
-import java.util.Arrays;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -49,7 +47,7 @@ public class AvroBlockTransformer {
 
     public void configure(){
 
-        bitcoinBlockStream.to("influx-topic").
+        //bitcoinBlockStream.to("influx-topic").
 
 
     }
