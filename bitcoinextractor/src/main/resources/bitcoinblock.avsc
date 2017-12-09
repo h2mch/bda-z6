@@ -84,7 +84,8 @@
       },
       {
         "name": "time",
-        "type": "long"
+        "type": "long",
+        "logicalType": "timestamp-millis"
       },
       {
         "name": "difficultyTarget",
