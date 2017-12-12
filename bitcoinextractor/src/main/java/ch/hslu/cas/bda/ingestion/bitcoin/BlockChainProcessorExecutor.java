@@ -2,6 +2,7 @@ package ch.hslu.cas.bda.ingestion.bitcoin;
 
 import org.bitcoinj.core.Block;
 import org.bitcoinj.core.Context;
+import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.utils.BlockFileLoader;
 
@@ -9,11 +10,14 @@ import java.io.File;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BlockChainProcessorExecutor {
 
     private final IBlockProcessor processor;
+    private final Map<Sha256Hash, Block> blockMap = new HashMap<>();
 
     public BlockChainProcessorExecutor(IBlockProcessor proccessor) {
         this.processor = proccessor;
@@ -31,12 +35,14 @@ public class BlockChainProcessorExecutor {
 
         System.out.println("Reading blocks from " + files.get(0).getName() + " to " + files.get(files.size() - 1).getName());
 
-        BlockFileLoader blockFileLoader = new BlockFileLoader(MainNetParams.get(), files);
+        BlockTrackerFileLoader blockFileLoader =
+                new BlockTrackerFileLoader(new BlockFileLoader(MainNetParams.get(), files));
 
         Context.getOrCreate(MainNetParams.get());
 
         long blockCount = 0;
         long txCount = 0;
+        Block lastBlock = null;
         try {
             long procStartTime = System.currentTimeMillis();
 
@@ -44,6 +50,7 @@ public class BlockChainProcessorExecutor {
 
             for (Block block : blockFileLoader) {
                 blockCount++;
+
                 txCount += block.getTransactions().size();
 
                 try {
@@ -66,7 +73,20 @@ public class BlockChainProcessorExecutor {
                     procStartTime = System.currentTimeMillis();
                     txCount = 0;
                 }
+
+                /*
+                if (lastBlock != null && !lastBlock.getHash().equals(block.getPrevBlockHash())) {
+                    System.out.println(String.format("Block processed does not reference previous block: No: %6d - Date: %tF %tT - Hash: %s", blockCount - 1, lastBlock.getTime(), lastBlock.getTime(), lastBlock.getHashAsString()));
+                }
+                */
+
+                lastBlock = block;
             }
+
+            Map<Sha256Hash, Long> blockNoMap = blockFileLoader.getBlockNoMap();
+            System.out.println("Block No Map size: " + blockNoMap.size());
+            System.out.println(String.format("Last block processed: No: %6d - Date: %tF %tT - Hash: %s", blockCount - 1, lastBlock.getTime(), lastBlock.getTime(), lastBlock.getHashAsString()));
+            System.out.println(String.format("Total blocks processed: %6d", blockCount));
 
             processor.onEnd();
         } catch (Exception ex) {
@@ -76,7 +96,7 @@ public class BlockChainProcessorExecutor {
         Duration duration = Duration.between(startTime, Instant.now());
 
         System.out.println("Blocks from " + files.get(0).getName() + " to " + files.get(files.size() - 1).getName());
-        System.out.println("Total Executiontime: " + duration.getSeconds() + "s");
+        System.out.println("Total execution time: " + duration.getSeconds() + "s");
     }
 
 }
