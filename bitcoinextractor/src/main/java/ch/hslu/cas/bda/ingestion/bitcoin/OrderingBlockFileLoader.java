@@ -11,7 +11,7 @@ import java.util.Map;
 public class OrderingBlockFileLoader implements Iterator<Block>, Iterable<Block> {
 
     private BlockFileLoader blockLoader;
-    private int bufferSize = 2000;
+    private int bufferSize = 100000;
     private Map<Sha256Hash, Block> previousBlockMap = new HashMap<>();
     private Block lastBlock = null;
     private long nextCounter = 0;
@@ -30,36 +30,32 @@ public class OrderingBlockFileLoader implements Iterator<Block>, Iterable<Block>
     public Block next() {
         nextCounter++;
         if (lastBlock == null) {
-            return initializeAndReturnFirst();
-        }
-
-        if (blockLoader.hasNext()) {
-            Block block = blockLoader.next();
-            previousBlockMap.put(block.getPrevBlockHash(), block);
+            lastBlock = blockLoader.next();
+            return lastBlock;
         }
 
         Block nextBlock = previousBlockMap.get(lastBlock.getHash());
-        if (nextBlock == null) {
-            throw new IllegalStateException("Next call no " + nextCounter + " - previous block not found with hash: " + lastBlock.getPrevBlockHash());
+        if (nextBlock != null) {
+            previousBlockMap.remove(lastBlock.getPrevBlockHash());
+            lastBlock = nextBlock;
+            return nextBlock;
         }
-        previousBlockMap.remove(lastBlock.getPrevBlockHash());
-        lastBlock = nextBlock;
-        return nextBlock;
+
+        while (blockLoader.hasNext() && previousBlockMap.size() <= bufferSize) {
+            nextBlock = blockLoader.next();
+            if (lastBlock.getHash().equals(nextBlock.getPrevBlockHash())) {
+                lastBlock = nextBlock;
+                return nextBlock;
+            }
+
+            previousBlockMap.put(nextBlock.getPrevBlockHash(), nextBlock);
+
+        }
+        throw new IllegalStateException("Next call no " + nextCounter + " - previous block not found with hash: " + lastBlock.getPrevBlockHash());
     }
 
     @Override
     public Iterator<Block> iterator() {
         return this;
-    }
-
-    private Block initializeAndReturnFirst() {
-        lastBlock = blockLoader.next();
-        int i = 0;
-        while ((i < bufferSize) && blockLoader.hasNext()) {
-            Block block = blockLoader.next();
-            previousBlockMap.put(block.getPrevBlockHash(), block);
-            i++;
-        }
-        return lastBlock;
     }
 }
