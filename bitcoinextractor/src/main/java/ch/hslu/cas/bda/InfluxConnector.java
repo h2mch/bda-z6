@@ -4,6 +4,7 @@ import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
 import org.influxdb.dto.Point;
 
+@Deprecated
 public class InfluxConnector implements AutoCloseable {
 
     private InfluxDB influxDB;

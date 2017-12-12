@@ -12,9 +12,10 @@ import java.util.UUID;
 
 import ch.hslu.cas.bda.CassandraConnector;
 
-public class TransactionConsumer {
+@Deprecated
+public class TransactionConsumerCassandra {
 
-    public static void main(final String[] args) throws Exception {
+    public static void main(final String[] args) {
         Properties settings = new Properties();
         settings.put(StreamsConfig.APPLICATION_ID_CONFIG, "bda-z6.bitcoin.consumer.transaction");
         settings.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "docker:9092");

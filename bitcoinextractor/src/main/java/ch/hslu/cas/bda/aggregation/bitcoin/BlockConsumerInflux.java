@@ -14,12 +14,14 @@ import java.util.concurrent.TimeUnit;
 import ch.hslu.cas.bda.InfluxConnector;
 import ch.hslu.cas.bda.ingestion.bitcoin.BlockTransactionExtractor;
 
+
+@Deprecated
 public class BlockConsumerInflux {
 
 
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BlockTransactionExtractor.class);
 
-    public static void main(final String[] args) throws Exception {
+    public static void main(final String[] args) {
         Properties settings = new Properties();
         settings.put(StreamsConfig.APPLICATION_ID_CONFIG, "bda-z6.bitcoin.consumer.block");
         settings.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "docker:9092");

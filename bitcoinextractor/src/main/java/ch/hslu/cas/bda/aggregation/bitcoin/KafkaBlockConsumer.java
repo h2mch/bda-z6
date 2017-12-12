@@ -1,7 +1,5 @@
 package ch.hslu.cas.bda.aggregation.bitcoin;
 
-import ch.hslu.cas.bda.message.bitcoin.AvBlock;
-import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -11,6 +9,10 @@ import java.util.Arrays;
 import java.util.Properties;
 import java.util.UUID;
 
+import ch.hslu.cas.bda.message.bitcoin.AvBlock;
+import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
+
+@Deprecated
 public class KafkaBlockConsumer {
 
     private final KafkaConsumer<String, AvBlock> consumer;

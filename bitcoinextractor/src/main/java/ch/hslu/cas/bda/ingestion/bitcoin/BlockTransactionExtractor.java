@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.StreamSupport;
 
+
+@Deprecated
 public class BlockTransactionExtractor {
 
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BlockTransactionExtractor.class);
