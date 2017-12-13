@@ -67,7 +67,7 @@ public class KafkaAvroBlockProducer implements IBlockProcessor {
     }
 
     @Override
-    public void process(long blockCount, Block block) throws IOException {
+    public void process(long blockCount, Block block) {
 
         try {
             AvBlock avBlock = new BlockConverter().toAvBlock(block, blockCount);
