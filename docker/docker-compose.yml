@@ -20,11 +20,9 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://192.168.99.100:9092"
       KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092"
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    volumes:
-      - /Users/had/Docker/kafka:/var/lib/kafka/data
 
   schema-registry:
     container_name: schema-registry
@@ -112,7 +110,7 @@ services:
       INFLUXDB_USER_PASSWORD: "root"
     # Store the data outside the container
     volumes:
-      - /Users/had/Docker/influxdb:/var/lib/influxdb
+      - /docker-share/influxdb:/var/lib/influxdb
 
   grafana:
     container_name: grafana
@@ -137,4 +135,4 @@ services:
       INFLUX_URL: "http://docker:8086"
     # Store the data outside the container
     volumes:
-      - /Users/had/Docker/grafana:/var/lib/grafana
+      - /docker-share/grafana:/var/lib/grafana
