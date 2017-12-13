@@ -98,6 +98,10 @@
       {
         "name": "blockNo",
         "type": "long"
+      },
+      {
+        "name": "size",
+        "type": "int"
       }
     ]
   }

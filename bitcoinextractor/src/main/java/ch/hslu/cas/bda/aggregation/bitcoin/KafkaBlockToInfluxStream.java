@@ -70,6 +70,7 @@ public class KafkaBlockToInfluxStream {
 
         AvBlockDatapoint datapoint = new AvBlockDatapoint();
         datapoint.setBlockNo(block.getBlockNo());
+        datapoint.setSize(block.getSize());
         datapoint.setBlockHash(block.getBlockHash());
         datapoint.setPreviousBlockHash(block.getPreviousBlockHash());
         datapoint.setDifficulty(calculateDifficulty(block.getDifficultyTarget()));
