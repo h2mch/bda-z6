@@ -1,7 +1,5 @@
 package ch.hslu.cas.bda.ingestion.bitcoin;
 
-import ch.hslu.cas.bda.message.avro.BlockConverter;
-import ch.hslu.cas.bda.message.bitcoin.AvBlock;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -20,11 +18,15 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.StreamSupport;
 
-public class KafkaAvroBlockProducer implements IBlockProcessor {
+import ch.hslu.cas.bda.message.avro.BlockConverter;
+import ch.hslu.cas.bda.message.bitcoin.AvBlock;
+
+public class KafkaAvroBlockProducer implements IBlockProcessor<Block> {
 
 
     // private static final String BITCOIN_BLOCKS = "src\\main\\resources";
-    private static final String BITCOIN_BLOCKS = "/Users/had/Library/Application Support/Bitcoin/blocks/";
+    private static final String BITCOIN_BLOCKS = "D:\\docker-share\\bitcoin\\blocks";
+    // private static final String BITCOIN_BLOCKS = "/Users/had/Library/Application Support/Bitcoin/blocks/";
     private Producer<String, AvBlock> blockProducer;
 
     public static void main(String[] args) throws IOException {
@@ -67,7 +69,7 @@ public class KafkaAvroBlockProducer implements IBlockProcessor {
     }
 
     @Override
-    public void process(long blockCount, Block block) throws IOException {
+    public void process(long blockCount, Block block) {
 
         try {
             AvBlock avBlock = new BlockConverter().toAvBlock(block, blockCount);

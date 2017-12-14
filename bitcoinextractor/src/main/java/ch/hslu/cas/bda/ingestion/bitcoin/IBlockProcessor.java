@@ -1,14 +1,12 @@
 package ch.hslu.cas.bda.ingestion.bitcoin;
 
-import org.bitcoinj.core.Block;
-
 import java.io.IOException;
 
-public interface IBlockProcessor {
+public interface IBlockProcessor<T> {
 
     void onStart();
 
-    void process(long blockCount, Block block) throws IOException;
+    void process(long number, T element) throws IOException;
 
     void onEnd();
 }

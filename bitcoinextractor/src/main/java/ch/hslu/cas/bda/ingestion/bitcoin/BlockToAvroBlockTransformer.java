@@ -17,7 +17,7 @@ import ch.hslu.cas.bda.message.avro.BlockConverter;
 import ch.hslu.cas.bda.message.bitcoin.AvBlock;
 
 @Deprecated
-public class BlockToAvroBlockTransformer implements IBlockProcessor {
+public class BlockToAvroBlockTransformer implements IBlockProcessor<Block> {
 
     private static final String BITCOIN_AVRO_FILES = "/Users/had/temp/Bitcoin/avblocks/";
 
