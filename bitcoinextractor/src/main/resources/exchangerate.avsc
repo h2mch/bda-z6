@@ -1,0 +1,77 @@
+[
+{
+"type": "record",
+"name": "AvExchangeRate",
+"namespace": "ch.hslu.cas.bda.message.bitcoin",
+             "fields": [
+             {
+             "name": "time",
+             "type": "long",
+             "logicalType": "timestamp-millis"
+             },
+             {
+             "name": "open",
+             "type": {
+                     "type": "bytes",
+                     "logicalType": "decimal",
+                     "scale" : 8,
+                               "precision": 18
+                     }
+             },
+             {
+             "name": "high",
+             "type": {
+                     "type": "bytes",
+                     "logicalType": "decimal",
+                     "scale" : 8,
+                               "precision": 18
+                     }
+             },
+             {
+             "name": "low",
+             "type": {
+                     "type": "bytes",
+                     "logicalType": "decimal",
+                     "scale" : 8,
+                               "precision": 18
+                     }
+             },
+             {
+             "name": "close",
+             "type": {
+                     "type": "bytes",
+                     "logicalType": "decimal",
+                     "scale" : 8,
+                               "precision": 18
+                     }
+             },
+{
+"name": "volumeBTC",
+"type": {
+        "type": "bytes",
+        "logicalType": "decimal",
+        "scale" : 8,
+                  "precision": 18
+        }
+},
+{
+"name": "volumeDollar",
+"type": {
+        "type": "bytes",
+        "logicalType": "decimal",
+        "scale" : 8,
+                  "precision": 18
+        }
+},
+{
+"name": "weightedPrice",
+"type": {
+        "type": "bytes",
+        "logicalType": "decimal",
+        "scale" : 8,
+                  "precision": 18
+        }
+}
+]
+}
+]

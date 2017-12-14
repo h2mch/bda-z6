@@ -7,16 +7,19 @@ import org.bitcoinj.core.TransactionOutput;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.script.Script;
 
+import java.math.BigDecimal;
 import java.util.stream.Collectors;
 
+import ch.hslu.cas.bda.ingestion.exchangerate.CoinbaseExchangeRate;
 import ch.hslu.cas.bda.message.bitcoin.AvBlock;
+import ch.hslu.cas.bda.message.bitcoin.AvExchangeRate;
 import ch.hslu.cas.bda.message.bitcoin.AvTransaction;
 import ch.hslu.cas.bda.message.bitcoin.Input;
 import ch.hslu.cas.bda.message.bitcoin.Output;
 
-public class BlockConverter {
+public class AvroConverter {
 
-    public AvBlock toAvBlock(Block block, long blockNo) {
+    public static AvBlock toAvBlock(Block block, long blockNo) {
         AvBlock avBlock = new AvBlock();
         avBlock.setBlockHash(block.getHashAsString());
         avBlock.setTime(block.getTimeSeconds() * 1000); //influxDB is using UNIX TimeStamp in ms
@@ -25,7 +28,7 @@ public class BlockConverter {
         avBlock.setPreviousBlockHash(block.getPrevBlockHash().toString());
 
         avBlock.setTransactions(block.getTransactions().
-                stream().map(BlockConverter::toAvTransaction).collect(Collectors.toList()));
+                stream().map(AvroConverter::toAvTransaction).collect(Collectors.toList()));
 
         avBlock.setBlockNo(blockNo);
         return avBlock;
@@ -37,13 +40,26 @@ public class BlockConverter {
         avTx.setVersion(tx.getVersion());
         // avTx.setOutputSum(tx.getOutputSum().getValue());
         avTx.setVin(tx.getInputs().
-                stream().map(BlockConverter::toInput).filter(t -> t != null).collect(Collectors.toList()));
+                stream().map(AvroConverter::toInput).filter(t -> t != null).collect(Collectors.toList()));
 
         avTx.setVout(tx.getOutputs().
-                stream().map(BlockConverter::toOutput).filter(t -> t != null).collect(Collectors.toList()));
+                stream().map(AvroConverter::toOutput).filter(t -> t != null).collect(Collectors.toList()));
 
         // avTx.setOutputSum(avTx.getVout().stream().mapToLong(t -> t.getValue()).sum());
         return avTx;
+    }
+
+    public static AvExchangeRate toExchangeRate(CoinbaseExchangeRate coinbaseExchangeRate) {
+        AvExchangeRate avExchangeRate = new AvExchangeRate();
+        avExchangeRate.setClose(new BigDecimal(coinbaseExchangeRate.getClose()));
+        avExchangeRate.setHigh(new BigDecimal(coinbaseExchangeRate.getHigh()));
+        avExchangeRate.setLow(new BigDecimal(coinbaseExchangeRate.getLow()));
+        avExchangeRate.setVolumeBTC(new BigDecimal(coinbaseExchangeRate.getVolumeBTC()));
+        avExchangeRate.setOpen(new BigDecimal(coinbaseExchangeRate.getOpen()));
+        avExchangeRate.setVolumeDollar(new BigDecimal(coinbaseExchangeRate.getVolumeDollar()));
+        avExchangeRate.setWeightedPrice(new BigDecimal(coinbaseExchangeRate.getWeightedPrice()));
+        avExchangeRate.setTime(Long.parseLong(coinbaseExchangeRate.getTimeStamp()));
+        return avExchangeRate;
     }
 
     private static Input toInput(TransactionInput txInput) {

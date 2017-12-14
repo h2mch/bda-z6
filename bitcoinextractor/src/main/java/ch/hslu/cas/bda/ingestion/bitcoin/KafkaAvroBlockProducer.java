@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.StreamSupport;
 
-import ch.hslu.cas.bda.message.avro.BlockConverter;
+import ch.hslu.cas.bda.message.avro.AvroConverter;
 import ch.hslu.cas.bda.message.bitcoin.AvBlock;
 
 public class KafkaAvroBlockProducer implements IBlockProcessor<Block> {
@@ -72,7 +72,7 @@ public class KafkaAvroBlockProducer implements IBlockProcessor<Block> {
     public void process(long blockCount, Block block) {
 
         try {
-            AvBlock avBlock = new BlockConverter().toAvBlock(block, blockCount);
+            AvBlock avBlock = new AvroConverter().toAvBlock(block, blockCount);
             ProducerRecord<String, AvBlock> record = new ProducerRecord<>("bitcoin.block", avBlock);
             blockProducer.send(record).get();
         } catch (Exception e) {

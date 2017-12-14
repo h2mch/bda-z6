@@ -56,8 +56,9 @@
                             -->
                         </goals>
                         <configuration>
-
-                            <sourceDirectory>${project.basedir}/src/main/resources/</sourceDirectory>
+                            <enableDecimalLogicalType>true</enableDecimalLogicalType>
+                            <sourceDirectory>${project.basedir}/src/main/resources/
+                            </sourceDirectory>
                             <!--
                             <outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
                             -->
@@ -174,6 +175,12 @@
             <groupId>org.apache.avro</groupId>
             <artifactId>avro-maven-plugin</artifactId>
             <version>1.8.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>4.1</version>
         </dependency>
 
 

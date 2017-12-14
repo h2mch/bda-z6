@@ -13,8 +13,9 @@ import java.util.List;
 import java.util.stream.StreamSupport;
 
 import ch.hslu.cas.bda.message.avro.AvroSerializer;
-import ch.hslu.cas.bda.message.avro.BlockConverter;
 import ch.hslu.cas.bda.message.bitcoin.AvBlock;
+
+import static ch.hslu.cas.bda.message.avro.AvroConverter.toAvBlock;
 
 @Deprecated
 public class BlockToAvroBlockTransformer implements IBlockProcessor<Block> {
@@ -47,7 +48,7 @@ public class BlockToAvroBlockTransformer implements IBlockProcessor<Block> {
     @Override
     public void process(long blockCount, Block block) throws IOException {
         String filename = BITCOIN_AVRO_FILES + "msg" + String.format("%09d", blockCount);
-        AvBlock avBlock = new BlockConverter().toAvBlock(block, blockCount);
+        AvBlock avBlock = toAvBlock(block, blockCount);
         new AvroSerializer().toFile(avBlock, AvBlock.class, filename);
     }
 
