@@ -7,6 +7,7 @@ import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.utils.BlockFileLoader;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
@@ -45,7 +46,12 @@ public class BlockChainProcessorExecutor {
         blockFileLoader = new BlockFileLoader(MainNetParams.get(), files);
 
         processor.onStart();
-        processBlocksInternal(blockFileLoader, block -> processor.process(blockNoMap.get(block.getHash()), block));
+        processBlocksInternal(blockFileLoader, block -> {
+            try {
+                processor.process(blockNoMap.get(block.getHash()), block);
+            } catch (IOException e) {
+            }
+        });
         processor.onEnd();
     }
 
