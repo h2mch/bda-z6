@@ -160,3 +160,8 @@ docker run -e ADV_HOST=192.168.99.100 -e LICENSE_URL="https://milou.landoop.com/
 ```
 - Lenses and Kafka will be available in about 30-45 seconds at http://localhost:3030. 
 - The default credentials are admin / admin. 
+
+## Neo4J
+```bash
+docker run --publish=7474:7474 --publish=7687:7687 --volume=/docker-share/neo4j/data:/data --volume=/docker-share/neo4j/logs:/logs neo4j:3.0
+```
