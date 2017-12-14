@@ -24,6 +24,10 @@ import ch.hslu.cas.bda.message.bitcoin.AvExchangeRate;
 
 import static ch.hslu.cas.bda.message.avro.AvroConverter.toExchangeRate;
 
+/**
+ * Delete this topic:
+ * $ docker exec -it kafka kafka-topics --zookeeper zookeeper:2181 --delete --topic bitcoin.exchange
+ */
 public class KafkaAvroBlockProducer implements AvroProcessor<CoinbaseExchangeRate> {
 
 
@@ -42,13 +46,6 @@ public class KafkaAvroBlockProducer implements AvroProcessor<CoinbaseExchangeRat
 
             List<CoinbaseExchangeRate> exchangeRates = csvToBean.parse();
 
-/*
-        List<CoinbaseExchangeRate> exchangeRates =
-                new CsvToBeanBuilder(new FileReader(RATE_CVS_FILE))
-                        .withType(CoinbaseExchangeRate.class)
-                        .build()
-                        .parse();
-*/
             KafkaAvroBlockProducer kafkaAvroBlockProducer = new KafkaAvroBlockProducer();
             ElementExecutor executor = new ElementExecutor(kafkaAvroBlockProducer);
             executor.process(exchangeRates);
@@ -85,6 +82,7 @@ public class KafkaAvroBlockProducer implements AvroProcessor<CoinbaseExchangeRat
 
         exchangeProducer = new KafkaProducer<>(settings);
     }
+
 
     @Override
     public Future<RecordMetadata> process(long number, CoinbaseExchangeRate coinbase) {

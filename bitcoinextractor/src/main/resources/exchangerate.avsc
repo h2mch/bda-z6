@@ -3,7 +3,8 @@
 "type": "record",
 "name": "AvExchangeRate",
 "namespace": "ch.hslu.cas.bda.message.bitcoin",
-             "fields": [
+             "fields":
+             [
              {
              "name": "time",
              "type": "long",
@@ -11,66 +12,31 @@
              },
              {
              "name": "open",
-             "type": {
-                     "type": "bytes",
-                     "logicalType": "decimal",
-                     "scale" : 8,
-                               "precision": 18
-                     }
+             "type": "long"
              },
              {
              "name": "high",
-             "type": {
-                     "type": "bytes",
-                     "logicalType": "decimal",
-                     "scale" : 8,
-                               "precision": 18
-                     }
+             "type": "long"
              },
              {
              "name": "low",
-             "type": {
-                     "type": "bytes",
-                     "logicalType": "decimal",
-                     "scale" : 8,
-                               "precision": 18
-                     }
+             "type": "long"
              },
              {
              "name": "close",
-             "type": {
-                     "type": "bytes",
-                     "logicalType": "decimal",
-                     "scale" : 8,
-                               "precision": 18
-                     }
+             "type": "long"
              },
 {
 "name": "volumeBTC",
-"type": {
-        "type": "bytes",
-        "logicalType": "decimal",
-        "scale" : 8,
-                  "precision": 18
-        }
+"type": "long"
 },
 {
 "name": "volumeDollar",
-"type": {
-        "type": "bytes",
-        "logicalType": "decimal",
-        "scale" : 8,
-                  "precision": 18
-        }
+"type": "long"
 },
 {
 "name": "weightedPrice",
-"type": {
-        "type": "bytes",
-        "logicalType": "decimal",
-        "scale" : 8,
-                  "precision": 18
-        }
+"type": "long"
 }
 ]
 }

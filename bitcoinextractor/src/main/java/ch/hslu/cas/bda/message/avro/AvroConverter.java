@@ -1,9 +1,5 @@
 package ch.hslu.cas.bda.message.avro;
 
-import ch.hslu.cas.bda.message.bitcoin.AvBlock;
-import ch.hslu.cas.bda.message.bitcoin.AvTransaction;
-import ch.hslu.cas.bda.message.bitcoin.Input;
-import ch.hslu.cas.bda.message.bitcoin.Output;
 import org.bitcoinj.core.Block;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
@@ -22,6 +18,8 @@ import ch.hslu.cas.bda.message.bitcoin.Input;
 import ch.hslu.cas.bda.message.bitcoin.Output;
 
 public class AvroConverter {
+
+    public static final BigDecimal BD_1000 = new BigDecimal(1000l);
 
     public static AvBlock toAvBlock(Block block, long blockNo) {
         AvBlock avBlock = new AvBlock();
@@ -56,14 +54,14 @@ public class AvroConverter {
 
     public static AvExchangeRate toExchangeRate(CoinbaseExchangeRate coinbaseExchangeRate) {
         AvExchangeRate avExchangeRate = new AvExchangeRate();
-        avExchangeRate.setClose(new BigDecimal(coinbaseExchangeRate.getClose()));
-        avExchangeRate.setHigh(new BigDecimal(coinbaseExchangeRate.getHigh()));
-        avExchangeRate.setLow(new BigDecimal(coinbaseExchangeRate.getLow()));
-        avExchangeRate.setVolumeBTC(new BigDecimal(coinbaseExchangeRate.getVolumeBTC()));
-        avExchangeRate.setOpen(new BigDecimal(coinbaseExchangeRate.getOpen()));
-        avExchangeRate.setVolumeDollar(new BigDecimal(coinbaseExchangeRate.getVolumeDollar()));
-        avExchangeRate.setWeightedPrice(new BigDecimal(coinbaseExchangeRate.getWeightedPrice()));
-        avExchangeRate.setTime(Long.parseLong(coinbaseExchangeRate.getTimeStamp()));
+        avExchangeRate.setClose(new BigDecimal(coinbaseExchangeRate.getClose()).multiply(BD_1000).longValue());
+        avExchangeRate.setHigh(new BigDecimal(coinbaseExchangeRate.getHigh()).multiply(BD_1000).longValue());
+        avExchangeRate.setLow(new BigDecimal(coinbaseExchangeRate.getLow()).multiply(BD_1000).longValue());
+        avExchangeRate.setVolumeBTC(new BigDecimal(coinbaseExchangeRate.getVolumeBTC()).multiply(BD_1000).longValue());
+        avExchangeRate.setOpen(new BigDecimal(coinbaseExchangeRate.getOpen()).multiply(BD_1000).longValue());
+        avExchangeRate.setVolumeDollar(new BigDecimal(coinbaseExchangeRate.getVolumeDollar()).multiply(BD_1000).longValue());
+        avExchangeRate.setWeightedPrice(new BigDecimal(coinbaseExchangeRate.getWeightedPrice()).multiply(BD_1000).longValue());
+        avExchangeRate.setTime(Long.parseLong(coinbaseExchangeRate.getTimeStamp()) * 1000);
         return avExchangeRate;
     }
 
