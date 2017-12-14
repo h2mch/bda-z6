@@ -1,5 +1,9 @@
 package ch.hslu.cas.bda.message.avro;
 
+import ch.hslu.cas.bda.message.bitcoin.AvBlock;
+import ch.hslu.cas.bda.message.bitcoin.AvTransaction;
+import ch.hslu.cas.bda.message.bitcoin.Input;
+import ch.hslu.cas.bda.message.bitcoin.Output;
 import org.bitcoinj.core.Block;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionInput;
@@ -26,6 +30,7 @@ public class AvroConverter {
         avBlock.setVersion(block.getVersion());
         avBlock.setDifficultyTarget(block.getDifficultyTarget());
         avBlock.setPreviousBlockHash(block.getPrevBlockHash().toString());
+        avBlock.setSize(block.getMessageSize());
 
         avBlock.setTransactions(block.getTransactions().
                 stream().map(AvroConverter::toAvTransaction).collect(Collectors.toList()));

@@ -44,6 +44,10 @@
       {
         "name": "txCount",
         "type": "int"
+      },
+      {
+        "name": "size",
+        "type": "int"
       }
     ]
   }
