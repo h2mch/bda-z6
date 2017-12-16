@@ -85,7 +85,8 @@ public class KafkaBlockToInfluxStream {
     private Long calculateTxFees(AvBlock block) {
         long miningReward = calculcateMined(block.getBlockNo());
         long firstTxSum = block.getTransactions().get(0).getVout().stream().mapToLong(o -> o.getValue()).sum();
-        return firstTxSum - miningReward;
+        // Tx may not be negative
+        return Math.abs(firstTxSum - miningReward);
     }
 
     private Long calculateDifficulty(Long compactedDifficultyTarget) {
