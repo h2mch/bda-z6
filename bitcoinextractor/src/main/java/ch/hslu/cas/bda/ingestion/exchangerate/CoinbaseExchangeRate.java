@@ -1,24 +1,25 @@
 package ch.hslu.cas.bda.ingestion.exchangerate;
 
 import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvBindByPosition;
 
 public class CoinbaseExchangeRate {
 
-    @CsvBindByName()
+    @CsvBindByPosition(position = 0)
     private String timeStamp;
-    @CsvBindByName
+    @CsvBindByPosition(position = 1)
     private String open;
-    @CsvBindByName
+    @CsvBindByPosition(position = 2)
     private String high;
-    @CsvBindByName
+    @CsvBindByPosition(position = 3)
     private String low;
-    @CsvBindByName
+    @CsvBindByPosition(position = 4)
     private String close;
-    @CsvBindByName(column = "Volume_(BTC)")
+    @CsvBindByPosition(position = 5)
     private String volumeBTC;
-    @CsvBindByName(column = "Volume_(Currency)")
+    @CsvBindByPosition(position = 6)
     private String volumeDollar;
-    @CsvBindByName(column = "Weighted_Price")
+    @CsvBindByPosition(position = 7)
     private String weightedPrice;
 
     public String getClose() {

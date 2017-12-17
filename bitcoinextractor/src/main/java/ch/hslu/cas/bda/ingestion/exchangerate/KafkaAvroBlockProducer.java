@@ -10,17 +10,29 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.streams.StreamsConfig;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Future;
+import java.util.stream.StreamSupport;
 
 import ch.hslu.cas.bda.ingestion.AvroProcessor;
 import ch.hslu.cas.bda.ingestion.ElementExecutor;
 import ch.hslu.cas.bda.message.bitcoin.AvExchangeRate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static ch.hslu.cas.bda.message.avro.AvroConverter.toExchangeRate;
 
@@ -30,26 +42,58 @@ import static ch.hslu.cas.bda.message.avro.AvroConverter.toExchangeRate;
  */
 public class KafkaAvroBlockProducer implements AvroProcessor<CoinbaseExchangeRate> {
 
+    private static Logger logger = LoggerFactory.getLogger( KafkaAvroBlockProducer.class );
 
-    private static final String RATE_CVS_FILE = "src\\main\\resources\\bitcoin-historical-data\\coinbase.big.csv";
+
+    private static final String RATE_CVS_FILE = "/media/heinz/Elements/docker-share/exchange/splitted";
 
     private Producer<String, AvExchangeRate> exchangeProducer;
 
     public static void main(String[] args) throws IOException {
 
-        try (Reader reader = Files.newBufferedReader(Paths.get(RATE_CVS_FILE))) {
+        Instant startTime = Instant.now();
+        logger.info("Start {}", startTime);
 
-            CsvToBean csvToBean = new CsvToBeanBuilder(reader)
-                    .withType(CoinbaseExchangeRate.class)
-                    .withIgnoreLeadingWhiteSpace(true)
-                    .build();
+        List<File> exchangeFiles = new ArrayList<>();
 
-            List<CoinbaseExchangeRate> exchangeRates = csvToBean.parse();
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(RATE_CVS_FILE))) {
 
-            KafkaAvroBlockProducer kafkaAvroBlockProducer = new KafkaAvroBlockProducer();
-            ElementExecutor executor = new ElementExecutor(kafkaAvroBlockProducer);
-            executor.process(exchangeRates);
+            StreamSupport.stream(directoryStream.spliterator(), false)
+                    .filter(Files::isRegularFile)
+                    .forEach(path -> exchangeFiles.add(path.toFile()));
         }
+
+
+        int totalFiles = exchangeFiles.size();
+        logger.info("Processing {} files...", totalFiles);
+        int count = 1;
+        long totalRecords = 0;
+
+
+        KafkaAvroBlockProducer kafkaAvroBlockProducer = new KafkaAvroBlockProducer();
+        ElementExecutor executor = new ElementExecutor(kafkaAvroBlockProducer);
+
+        for (File file : exchangeFiles) {
+            try (Reader reader = Files.newBufferedReader(file.toPath())) {
+
+
+                CsvToBean csvToBean = new CsvToBeanBuilder(reader)
+                        .withType(CoinbaseExchangeRate.class)
+                        .withIgnoreLeadingWhiteSpace(true)
+                        .build();
+
+                List<CoinbaseExchangeRate> exchangeRates = csvToBean.parse();
+
+                executor.process(exchangeRates);
+
+                totalRecords+= exchangeRates.size();
+                logger.info("\t{} of {} ({} records)", count++, totalFiles, totalRecords);
+            }
+        }
+
+
+        Duration duration = Duration.between(startTime, Instant.now());
+        logger.info("Total execution time: {} min {} sec", duration.getSeconds());
     }
 
     @Override

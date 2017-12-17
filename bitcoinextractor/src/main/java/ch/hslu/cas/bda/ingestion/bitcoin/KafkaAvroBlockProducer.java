@@ -1,11 +1,15 @@
 package ch.hslu.cas.bda.ingestion.bitcoin;
 
+import ch.hslu.cas.bda.message.avro.AvroConverter;
+import ch.hslu.cas.bda.message.bitcoin.AvBlock;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.streams.StreamsConfig;
 import org.bitcoinj.core.Block;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,18 +22,18 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.StreamSupport;
 
-import ch.hslu.cas.bda.message.avro.AvroConverter;
-import ch.hslu.cas.bda.message.bitcoin.AvBlock;
-
 public class KafkaAvroBlockProducer implements IBlockProcessor<Block> {
 
 
+    private static Logger logger = LoggerFactory.getLogger(KafkaAvroBlockProducer.class);
+
     // private static final String BITCOIN_BLOCKS = "src\\main\\resources";
-    private static final String BITCOIN_BLOCKS = "D:\\docker-share\\bitcoin\\blocks";
+    private static final String BITCOIN_BLOCKS = "/media/heinz/Elements/docker-share/bitcoin/blocks/";
     // private static final String BITCOIN_BLOCKS = "/Users/had/Library/Application Support/Bitcoin/blocks/";
     private Producer<String, AvBlock> blockProducer;
 
     public static void main(String[] args) throws IOException {
+        logger.info("test");
 
         List<File> blockChainFiles = new ArrayList<>();
 
@@ -76,7 +80,7 @@ public class KafkaAvroBlockProducer implements IBlockProcessor<Block> {
             ProducerRecord<String, AvBlock> record = new ProducerRecord<>("bitcoin.block", avBlock);
             blockProducer.send(record).get();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Could not send block with count '{}'", blockCount, e);
         }
     }
 

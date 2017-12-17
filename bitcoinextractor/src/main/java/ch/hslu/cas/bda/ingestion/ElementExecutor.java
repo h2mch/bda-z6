@@ -1,12 +1,16 @@
 package ch.hslu.cas.bda.ingestion;
 
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Future;
 
 public class ElementExecutor {
+
+
+    private static Logger logger = LoggerFactory.getLogger(ElementExecutor.class);
 
     private final AvroProcessor processor;
 
@@ -19,13 +23,10 @@ public class ElementExecutor {
         if (list.isEmpty()) {
             throw new IllegalArgumentException("List of files is empty");
         }
-        System.out.println("Start processing " + list.size() + " Elements");
 
-
-        long count = 0;
         try {
+            long count = 0;
             long procStartTime = System.currentTimeMillis();
-            System.out.println("Start" + new Date(procStartTime));
             processor.onStart();
 
             for (Object o : list) {
@@ -35,19 +36,14 @@ public class ElementExecutor {
                     Future<RecordMetadata> result = processor.process(count, o);
                     result.get();
                 } catch (Exception e) {
-                    System.err.println("Error processing element " + count);
-                    System.err.println("Element:\n" + o.toString());
-                    e.printStackTrace();
+                    logger.error("Error processing element {}", count, e);
                 }
 
                 if (count % 10000 == 0) {
                     long procTimeInMs = System.currentTimeMillis() - procStartTime;
-                    System.out.print(String.format("Element %6d in %6.0f s", count, procTimeInMs * 1000.0));
-                    System.out.println();
+                    logger.info("\t\tElement {} in {} s", count, procTimeInMs * 1000.0);
                 }
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
         } finally {
             processor.onEnd();
         }

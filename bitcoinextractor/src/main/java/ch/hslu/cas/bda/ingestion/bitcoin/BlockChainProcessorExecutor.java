@@ -5,17 +5,21 @@ import org.bitcoinj.core.Context;
 import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.utils.BlockFileLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
 public class BlockChainProcessorExecutor {
+
+
+    private static Logger logger = LoggerFactory.getLogger(BlockChainProcessorExecutor.class);
 
     private final IBlockProcessor processor;
 
@@ -30,8 +34,8 @@ public class BlockChainProcessorExecutor {
             throw new IllegalArgumentException("List of files is empty");
         }
 
-        System.out.println("Reading blocks from " + files.get(0).getName() + " to " + files.get(files.size() - 1).getName());
-        System.out.println("Step 1: Pre-processing");
+        logger.info("Reading blocks from {} to {}", files.get(0).getName(), files.get(files.size() - 1).getName());
+        logger.info("Step 1: Pre-processing");
 
         BlockFileLoader blockFileLoader = new BlockFileLoader(MainNetParams.get(), files);
         BlockChainTracker tracker = new BlockChainTracker();
@@ -39,10 +43,10 @@ public class BlockChainProcessorExecutor {
         processBlocksInternal(blockFileLoader, block -> tracker.add(block));
 
         Map<Sha256Hash, Long> blockNoMap = tracker.getBlockNoMap();
-        System.out.println("Block No Map size: " + blockNoMap.size());
+        logger.info("Block No Map size: {}", blockNoMap.size());
 
 
-        System.out.println("Step 2: Processing");
+        logger.info("Step 2: Processing");
         blockFileLoader = new BlockFileLoader(MainNetParams.get(), files);
 
         processor.onStart();
@@ -56,8 +60,8 @@ public class BlockChainProcessorExecutor {
     }
 
     private void processBlocksInternal(Iterable<Block> blockFileLoader, Consumer<Block> consumer) {
-        System.out.println("Start" + new Date().toString());
         Instant startTime = Instant.now();
+        logger.info("Start {}", startTime);
 
         Context.getOrCreate(MainNetParams.get());
 
@@ -77,20 +81,18 @@ public class BlockChainProcessorExecutor {
                     consumer.accept(block);
 
                 } catch (RuntimeException e) {
-                    System.err.println("Error processing block seq. no: " + blockCount);
-                    System.err.println("Block Hash: " + block.getHash().toString());
-                    e.printStackTrace();
+                    logger.error("Error processing block seq. no: " + blockCount);
+                    logger.error("Block Hash: {}", block.getHash().toString(), e);
                 }
 
                 if (blockCount % 10000 == 0) {
                     long procTimeInMs = System.currentTimeMillis() - procStartTime;
-                    System.out.print(String.format("Block %6d", blockCount));
-                    System.out.print(String.format(" - TxCount: %7d", txCount));
-                    System.out.print(String.format(" - Tx/Time: %6.0f Tx/s", (txCount / procTimeInMs * 1000.0)));
-                    System.out.print(String.format(" - Processing time: %3.3fs", (procTimeInMs / 1000.0)));
-                    System.out.print(String.format(" - Date: %tF", block.getTime()));
-                    System.out.print(String.format(" - Size: %6d", block.getMessageSize()));
-                    System.out.println();
+                    logger.info("Block {}", blockCount);
+                    logger.info("\t- TxCount: {}", txCount);
+                    logger.info("\t- Tx/Time: {} Tx/s", (txCount / procTimeInMs * 1000.0));
+                    logger.info("\t- Processing time: {}s", (procTimeInMs / 1000.0));
+                    logger.info("\t- Date: {}", block.getTime());
+                    logger.info("\t- Size: {}\n", block.getMessageSize());
 
                     procStartTime = System.currentTimeMillis();
                     txCount = 0;
@@ -100,8 +102,8 @@ public class BlockChainProcessorExecutor {
                 lastBlock = block;
             }
 
-            System.out.println(String.format("Last block processed: No: %6d - Date: %tF %tT - Hash: %s", blockCount - 1, lastBlock.getTime(), lastBlock.getTime(), lastBlock.getHashAsString()));
-            System.out.println(String.format("Total blocks processed: %6d", blockCount));
+            logger.info("Last block processed: No: {} - Date: {} - Hash: {}", blockCount - 1, lastBlock.getTime(), lastBlock.getHashAsString());
+            logger.info("Total blocks processed: {}", blockCount);
 
 
         } catch (Exception ex) {
@@ -110,7 +112,7 @@ public class BlockChainProcessorExecutor {
 
         Duration duration = Duration.between(startTime, Instant.now());
 
-        System.out.println("Total execution time: " + duration.getSeconds() + "s");
+        logger.info("Total execution time: {}s", duration.getSeconds());
     }
 
 }
