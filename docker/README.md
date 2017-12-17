@@ -168,3 +168,16 @@ docker run -e ADV_HOST=192.168.99.100 -e LICENSE_URL="https://milou.landoop.com/
 ```bash
 docker run --publish=7474:7474 --publish=7687:7687 --volume=/docker-share/neo4j/data:/data --volume=/docker-share/neo4j/logs:/logs neo4j:3.0
 ```
+
+## Docker on Ubuntu 17.10
+```bash
+$ sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+$ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu zesty stable"
+$ sudo apt-get update
+
+$ sudo groupadd docker
+$ sudo usermod -aG docker $USER
+
+# 3. Log out and log back in so that your group membership is re-evaluated.
+```
