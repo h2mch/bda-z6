@@ -181,3 +181,11 @@ $ sudo usermod -aG docker $USER
 
 # 3. Log out and log back in so that your group membership is re-evaluated.
 ```
+
+
+heinz@x1-carbon:~/source/junk$ git clone https://github.com/confluentinc/ksql.git  
+heinz@x1-carbon:~/source/junk$ cd ksql  
+heinz@x1-carbon:~/source/junk/ksql$ mvn clean compile install -DskipTests
+heinz@x1-carbon:~/source/junk/ksql$ ./bin/ksql-cli local --bootstrap-server localhost:9092
+
+
