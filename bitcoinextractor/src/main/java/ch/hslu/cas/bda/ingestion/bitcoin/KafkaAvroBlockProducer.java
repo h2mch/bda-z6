@@ -33,8 +33,6 @@ public class KafkaAvroBlockProducer implements IBlockProcessor<Block> {
     private Producer<String, AvBlock> blockProducer;
 
     public static void main(String[] args) throws IOException {
-        logger.info("test");
-
         List<File> blockChainFiles = new ArrayList<>();
 
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(BITCOIN_BLOCKS))) {

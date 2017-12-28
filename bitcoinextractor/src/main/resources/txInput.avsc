@@ -1,0 +1,26 @@
+[
+  {
+    "type": "record",
+    "name": "AvTxInput",
+    "namespace": "ch.hslu.cas.bda.message.bitcoin",
+    "fields": [
+      {
+        "name": "time",
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      {
+        "name": "txid",
+        "type": "string"
+      },
+      {
+        "name": "vout",
+        "type": "string"
+      },
+      {
+        "name": "sequence",
+        "type": "long"
+      }
+    ]
+  }
+]
