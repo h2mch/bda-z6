@@ -34,14 +34,13 @@ public class ElementExecutor {
                 try {
                     // Use of ExecutorService service = Executors.newFixedThreadPool...
                     Future<RecordMetadata> result = processor.process(count, o);
-                    result.get();
+                    if (count % 1000 == 0) {
+                        RecordMetadata recordMetadata = result.get();
+                        long procTimeInMs = System.currentTimeMillis() - procStartTime;
+                        logger.info("\t\tElement {} in {} s into '{}'", count, procTimeInMs * 1000.0, recordMetadata.topic() );
+                    }
                 } catch (Exception e) {
                     logger.error("Error processing element {}", count, e);
-                }
-
-                if (count % 10000 == 0) {
-                    long procTimeInMs = System.currentTimeMillis() - procStartTime;
-                    logger.info("\t\tElement {} in {} s", count, procTimeInMs * 1000.0);
                 }
             }
         } finally {

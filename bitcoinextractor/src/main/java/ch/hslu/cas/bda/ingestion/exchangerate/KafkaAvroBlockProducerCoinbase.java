@@ -19,10 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Future;
@@ -40,9 +37,9 @@ import static ch.hslu.cas.bda.message.avro.AvroConverter.toExchangeRate;
  * Delete this topic:
  * $ docker exec -it kafka kafka-topics --zookeeper zookeeper:2181 --delete --topic bitcoin.exchange
  */
-public class KafkaAvroBlockProducer implements AvroProcessor<CoinbaseExchangeRate> {
+public class KafkaAvroBlockProducerCoinbase implements AvroProcessor<CoinbaseExchangeRate> {
 
-    private static Logger logger = LoggerFactory.getLogger( KafkaAvroBlockProducer.class );
+    private static Logger logger = LoggerFactory.getLogger( KafkaAvroBlockProducerCoinbase.class );
 
 
     private static final String RATE_CVS_FILE = "/media/heinz/Elements/docker-share/exchange/splitted";
@@ -70,8 +67,8 @@ public class KafkaAvroBlockProducer implements AvroProcessor<CoinbaseExchangeRat
         long totalRecords = 0;
 
 
-        KafkaAvroBlockProducer kafkaAvroBlockProducer = new KafkaAvroBlockProducer();
-        ElementExecutor executor = new ElementExecutor(kafkaAvroBlockProducer);
+        KafkaAvroBlockProducerCoinbase kafkaAvroBlockProducerCoinbase = new KafkaAvroBlockProducerCoinbase();
+        ElementExecutor executor = new ElementExecutor(kafkaAvroBlockProducerCoinbase);
 
         for (File file : exchangeFiles) {
             try (Reader reader = Files.newBufferedReader(file.toPath())) {

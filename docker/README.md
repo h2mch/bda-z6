@@ -41,6 +41,12 @@ Empty topic workaround (if deletion is not enabled)
 root@kafka:/kafka-topics --alter --topic foo --config retention.ms=1000 --zookeeper zookeeper:2181
 ```
 
+Show Content of a topic
+```bash
+root@kafka:/# kafka-console-consumer --zookeeper zookeeper:2181 --topic bitcoin.exchange.gdax --from-beginning
+```
+
+
 ## Kafka HTTP
 This is provided by the docker kafka-rest container
 

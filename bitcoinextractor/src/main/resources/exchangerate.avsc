@@ -1,43 +1,42 @@
 [
-{
-"type": "record",
-"name": "AvExchangeRate",
-"namespace": "ch.hslu.cas.bda.message.bitcoin",
-             "fields":
-             [
-             {
-             "name": "time",
-             "type": "long",
-             "logicalType": "timestamp-millis"
-             },
-             {
-             "name": "open",
-             "type": "long"
-             },
-             {
-             "name": "high",
-             "type": "long"
-             },
-             {
-             "name": "low",
-             "type": "long"
-             },
-             {
-             "name": "close",
-             "type": "long"
-             },
-{
-"name": "volumeBTC",
-"type": "long"
-},
-{
-"name": "volumeDollar",
-"type": "long"
-},
-{
-"name": "weightedPrice",
-"type": "long"
-}
-]
-}
+  {
+    "type": "record",
+    "name": "AvExchangeRate",
+    "namespace": "ch.hslu.cas.bda.message.bitcoin",
+    "fields": [
+      {
+        "name": "time",
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      {
+        "name": "open",
+        "type": "long"
+      },
+      {
+        "name": "high",
+        "type": "long"
+      },
+      {
+        "name": "low",
+        "type": "long"
+      },
+      {
+        "name": "close",
+        "type": "long"
+      },
+      {
+        "name": "volumeBTC",
+        "type": "long"
+      },
+      {
+        "name": "volumeDollar",
+        "type": "long"
+      },
+      {
+        "name": "weightedPrice",
+        "type": "long"
+      }
+    ]
+  }
 ]
