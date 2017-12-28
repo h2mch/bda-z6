@@ -20,7 +20,7 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://192.168.99.100:9092"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
       KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092"
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
@@ -91,6 +91,23 @@ services:
       CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
       CONNECT_PLUGIN_PATH: "/usr/local/share/kafka/plugins"
 
+  kafka-manager:
+    image: sheepkiller/kafka-manager:latest
+    container_name: kafka-manager
+    hostname: kafka-manager
+    ports:
+      - "9000:9000"
+    depends_on:
+      - zookeeper
+      - kafka
+    links:
+      - zookeeper
+      - kafka
+    environment:
+      ZK_HOSTS: "zookeeper:2181"
+      APPLICATION_SECRET: "letmein"
+      KM_ARGS: "-Djava.net.preferIPv4Stack=true"
+
   influx:
     # https://store.docker.com/images/influxdb
     container_name: influx
@@ -110,7 +127,7 @@ services:
       INFLUXDB_USER_PASSWORD: "root"
     # Store the data outside the container
     volumes:
-      - /docker-share/influxdb:/var/lib/influxdb
+      - /home/docker/influxdb:/var/lib/influxdb
 
   grafana:
     container_name: grafana
@@ -135,4 +152,4 @@ services:
       INFLUX_URL: "http://docker:8086"
     # Store the data outside the container
     volumes:
-      - /docker-share/grafana:/var/lib/grafana
+      - /home/docker/grafana:/var/lib/grafana
