@@ -15,7 +15,7 @@
       },
       {
         "name": "vout",
-        "type": "string"
+        "type": "long"
       },
       {
         "name": "sequence",

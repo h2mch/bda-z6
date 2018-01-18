@@ -66,11 +66,11 @@ public class KafkaBlockToInfluxStreamTxInput {
             logger.info("Block: {} / {}", block.getBlockNo(), block.getBlockHash());
         }
         List<AvTxInput> inputList = new ArrayList<>();
-        if (block.getTransactions() == null){
+        if (block.getTransactions() == null) {
             return new ArrayList<>(0);
         }
         for (AvTransaction avTransaction : block.getTransactions()) {
-            if (avTransaction.getVin() == null){
+            if (avTransaction.getVin() == null) {
                 //coinbase tx (rewarded)
                 continue;
             }
@@ -79,6 +79,7 @@ public class KafkaBlockToInfluxStreamTxInput {
                 avInput.setTime(block.getTime());
                 avInput.setTxid(input.getTxid());
                 avInput.setSequence(input.getSequence());
+                avInput.setVout(input.getVout());
 
                 inputList.add(avInput);
             }
