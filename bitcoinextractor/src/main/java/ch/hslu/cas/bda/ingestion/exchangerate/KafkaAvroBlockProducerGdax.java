@@ -22,39 +22,36 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Future;
 
-import static ch.hslu.cas.bda.message.avro.AvroConverter.toExchangeRate;
+import static ch.hslu.cas.bda.message.avro.AvExchangeRateConverter.toExchangeRate;
 
 /**
- *
  * Create this connector
  * By CURL / Postman
- *
+ * <p>
  * <code>curl -X POST  http://docker:8083/connectors \
-             -H 'Content-Type: application/json' \
-             -d '{
-             "name": "influxdb-sink-exchange.gdax",
-             "config": {
-             "connector.class": "com.datamountaineer.streamreactor.connect.influx.InfluxSinkConnector",
-             "tasks.max": "1",
-             "topics": "bitcoin.exchange.gdax",
-             "connect.influx.kcql": "INSERT INTO exchange SELECT * FROM bitcoin.exchange.gdax WITHTIMESTAMP date_nr",
-             "connect.influx.url": "http://influx:8086",
-             "connect.influx.db": "bitcoin",
-             "connect.influx.username": "root",
-             "connect.influx.password": "root"
-             }
-             }'</code>
- *
+ * -H 'Content-Type: application/json' \
+ * -d '{
+ * "name": "influxdb-sink-exchange.gdax",
+ * "config": {
+ * "connector.class": "com.datamountaineer.streamreactor.connect.influx.InfluxSinkConnector",
+ * "tasks.max": "1",
+ * "topics": "bitcoin.exchange.gdax",
+ * "connect.influx.kcql": "INSERT INTO exchange SELECT * FROM bitcoin.exchange.gdax WITHTIMESTAMP date_nr",
+ * "connect.influx.url": "http://influx:8086",
+ * "connect.influx.db": "bitcoin",
+ * "connect.influx.username": "root",
+ * "connect.influx.password": "root"
+ * }
+ * }'</code>
+ * <p>
  * Delete this topic:
  * $ docker exec -it kafka kafka-topics --zookeeper zookeeper:2181 --delete --topic bitcoin.exchange.gdax
- *
- *
  */
 public class KafkaAvroBlockProducerGdax implements AvroProcessor<GdaxExchangeRate> {
 
     private static Logger logger = LoggerFactory.getLogger(KafkaAvroBlockProducerGdax.class);
 
-    private static final String RATE_CVS_FILE = "/home/heinz/source/bda-z6/bitcoinextractor/src/main/resources/exchangerate";
+    private static final String RATE_CVS_FILE = "/Users/had/projects/CASBigData/bda-z6/bitcoinextractor/src/main/resources/exchangerate/";
 
     private Producer<String, AvExchangeRateGDAX> exchangeProducer;
 

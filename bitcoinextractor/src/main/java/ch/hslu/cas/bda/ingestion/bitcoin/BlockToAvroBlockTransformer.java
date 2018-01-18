@@ -1,5 +1,7 @@
 package ch.hslu.cas.bda.ingestion.bitcoin;
 
+import ch.hslu.cas.bda.message.avro.AvroSerializer;
+import ch.hslu.cas.bda.message.bitcoin.AvBlock;
 import org.bitcoinj.core.Block;
 
 import java.io.File;
@@ -12,10 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
-import ch.hslu.cas.bda.message.avro.AvroSerializer;
-import ch.hslu.cas.bda.message.bitcoin.AvBlock;
-
-import static ch.hslu.cas.bda.message.avro.AvroConverter.toAvBlock;
+import static ch.hslu.cas.bda.message.avro.AvBlockConverter.toAvBlock;
 
 @Deprecated
 public class BlockToAvroBlockTransformer implements IBlockProcessor<Block> {

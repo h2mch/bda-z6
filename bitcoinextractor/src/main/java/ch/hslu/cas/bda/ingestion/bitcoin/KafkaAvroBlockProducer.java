@@ -1,6 +1,6 @@
 package ch.hslu.cas.bda.ingestion.bitcoin;
 
-import ch.hslu.cas.bda.message.avro.AvroConverter;
+import ch.hslu.cas.bda.message.avro.AvBlockConverter;
 import ch.hslu.cas.bda.message.bitcoin.AvBlock;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
@@ -74,7 +74,7 @@ public class KafkaAvroBlockProducer implements IBlockProcessor<Block> {
     public void process(long blockCount, Block block) {
 
         try {
-            AvBlock avBlock = new AvroConverter().toAvBlock(block, blockCount);
+            AvBlock avBlock = new AvBlockConverter().toAvBlock(block, blockCount);
             ProducerRecord<String, AvBlock> record = new ProducerRecord<>("bitcoin.block", avBlock);
             blockProducer.send(record).get();
         } catch (Exception e) {

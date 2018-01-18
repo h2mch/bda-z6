@@ -1,14 +1,14 @@
 package ch.hslu.cas.bda.ingestion.exchangerate;
 
+import ch.hslu.cas.bda.ingestion.AvroProcessor;
+import ch.hslu.cas.bda.ingestion.ElementExecutor;
+import ch.hslu.cas.bda.message.bitcoin.AvExchangeRate;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
-
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.streams.StreamsConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,13 +25,7 @@ import java.util.Properties;
 import java.util.concurrent.Future;
 import java.util.stream.StreamSupport;
 
-import ch.hslu.cas.bda.ingestion.AvroProcessor;
-import ch.hslu.cas.bda.ingestion.ElementExecutor;
-import ch.hslu.cas.bda.message.bitcoin.AvExchangeRate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static ch.hslu.cas.bda.message.avro.AvroConverter.toExchangeRate;
+import static ch.hslu.cas.bda.message.avro.AvExchangeRateConverter.toExchangeRate;
 
 /**
  * Delete this topic:
@@ -39,7 +33,7 @@ import static ch.hslu.cas.bda.message.avro.AvroConverter.toExchangeRate;
  */
 public class KafkaAvroBlockProducerCoinbase implements AvroProcessor<CoinbaseExchangeRate> {
 
-    private static Logger logger = LoggerFactory.getLogger( KafkaAvroBlockProducerCoinbase.class );
+    private static Logger logger = LoggerFactory.getLogger(KafkaAvroBlockProducerCoinbase.class);
 
 
     private static final String RATE_CVS_FILE = "/media/heinz/Elements/docker-share/exchange/splitted";
@@ -83,7 +77,7 @@ public class KafkaAvroBlockProducerCoinbase implements AvroProcessor<CoinbaseExc
 
                 executor.process(exchangeRates);
 
-                totalRecords+= exchangeRates.size();
+                totalRecords += exchangeRates.size();
                 logger.info("\t{} of {} ({} records)", count++, totalFiles, totalRecords);
             }
         }
