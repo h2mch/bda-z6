@@ -147,7 +147,7 @@ curl -X POST \
     "connector.class": "com.datamountaineer.streamreactor.connect.influx.InfluxSinkConnector",
     "tasks.max": "1",
     "topics": "bitcoin.block",
-    "connect.influx.kcql": "INSERT INTO block SELECT time, difficultyTarget, version, blockNo, blockHash FROM influx-topic WITHTIMESTAMP time",
+    "connect.influx.kcql": "INSERT INTO block SELECT time, difficultyTarget, version, blockNo, blockHash FROM influx-topic WITHTIMESTAMP time WITHTAG (difficultyTarget)",
 	"connect.influx.url": "http://influx:8086",
 	"connect.influx.db": "bitcoin",
 	"connect.influx.username": "admin",
