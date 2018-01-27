@@ -92,7 +92,9 @@ services:
       CONNECT_PLUGIN_PATH: "/usr/local/share/kafka/plugins"
 
   kafka-manager:
-    image: sheepkiller/kafka-manager:latest
+    container_name: kafka-manager
+    build: kafka-manager/.
+    #image: sheepkiller/kafka-manager:latest
     container_name: kafka-manager
     hostname: kafka-manager
     ports:
