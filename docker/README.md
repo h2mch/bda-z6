@@ -136,6 +136,9 @@ $./gradlew :kafka-connect-influxdb:shadowJar
 ```
 Copy the jar file into the Docker `confluent\kafka-connect` folder
 
+A new updated version is public available. see: https://lenses.stream/connectors/sink/influx.html
+
+
 Install Sink
 ```bash
 curl -X POST \
