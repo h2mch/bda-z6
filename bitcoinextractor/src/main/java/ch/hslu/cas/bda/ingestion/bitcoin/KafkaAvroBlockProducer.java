@@ -53,7 +53,7 @@ public class KafkaAvroBlockProducer implements IBlockProcessor<Block> {
         Properties settings = new Properties();
         settings.put(StreamsConfig.APPLICATION_ID_CONFIG, "bda-z6.bitcoin.producer");
         //settings.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "z6vm1.westeurope.cloudapp.azure.com:9092");
-        settings.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "docker:9092");
+        settings.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "docker:9092");
         settings.put(ProducerConfig.ACKS_CONFIG, "0");
         settings.put(ProducerConfig.BATCH_SIZE_CONFIG, 100000);
         settings.put(ProducerConfig.CLIENT_ID_CONFIG, "BitcoinBlockProducer");
