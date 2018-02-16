@@ -41,6 +41,7 @@ public class KafkaBlockToInfluxStreamTxOutput {
 
         settings.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
         settings.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, SpecificAvroSerde.class);
+        settings.put(StreamsConfig.REQUEST_TIMEOUT_MS_CONFIG, 60000); //Prevent TimeoutException: Expiring 284 record(s) for bitcoin.influx.tx.output-0: 30050 ms has passed since last append
         settings.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, "http://docker:8081");
 
         // setting offset reset to earliest so that we can re-run the demo code with the same pre-loaded data

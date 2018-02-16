@@ -54,6 +54,7 @@ public class BlockChainProcessorExecutor {
             try {
                 processor.process(blockNoMap.get(block.getHash()), block);
             } catch (IOException e) {
+                logger.error("could not process block at time '{}' ", block.getTime(), e);
             }
         });
         processor.onEnd();
