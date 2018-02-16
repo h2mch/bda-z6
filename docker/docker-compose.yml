@@ -59,7 +59,6 @@ services:
   kafka-connect:
     container_name: kafka-connect
     build: kafka-connect/.
-    # image: confluentinc/cp-kafka-connect
     hostname: kafka-connect
     depends_on:
       - zookeeper
@@ -79,14 +78,10 @@ services:
       CONNECT_OFFSET_FLUSH_INTERVAL_MS: 10000
       CONNECT_STATUS_STORAGE_TOPIC: "bitcoin-status"
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
-      #CONNECT_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_KEY_CONVERTER: "io.confluent.connect.avro.AvroConverter"
       CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
-      #CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_VALUE_CONVERTER: "io.confluent.connect.avro.AvroConverter"
-      #CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-      #CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
       CONNECT_PLUGIN_PATH: "/usr/local/share/kafka/plugins"
@@ -94,7 +89,6 @@ services:
   kafka-manager:
     container_name: kafka-manager
     build: kafka-manager/.
-    #image: sheepkiller/kafka-manager:latest
     container_name: kafka-manager
     hostname: kafka-manager
     ports:
@@ -111,9 +105,8 @@ services:
       KM_ARGS: "-Djava.net.preferIPv4Stack=true"
 
   influx:
-    # https://store.docker.com/images/influxdb
     container_name: influx
-    image: influxdb
+    image: influxdb:1.4.3
     hostname: influx
     ports:
       - "8085:8083"
@@ -127,14 +120,12 @@ services:
       INFLUXDB_ADMIN_PASSWORD: "root"
       INFLUXDB_USER: "root"
       INFLUXDB_USER_PASSWORD: "root"
-    # Store the data outside the container
     volumes:
       - /home/docker/influxdb:/var/lib/influxdb
 
   grafana:
     container_name: grafana
-    #build: grafana/.
-    image: grafana/grafana
+    image: grafana/grafana:latest
     hostname: grafana
     ports:
       - "3000:3000"
@@ -152,6 +143,5 @@ services:
       INFLUX_PASSWORD: "root"
       INFLUX_DB: "bitcoin"
       INFLUX_URL: "http://docker:8086"
-    # Store the data outside the container
     volumes:
       - /home/docker/grafana:/var/lib/grafana

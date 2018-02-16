@@ -85,7 +85,6 @@ Visit https://enterprise.influxdata.com to register for updates, InfluxDB server
 Connected to http://localhost:8086 version 1.0.0
 InfluxDB shell version: 1.0.0
 > CREATE DATABASE myFoo
->
 ```
 or via REST
 ### REST
@@ -143,18 +142,20 @@ Install Sink
 ```bash
 curl -X POST \
   http://docker:8083/connectors \
-  -H 'content-type: application/json' \
+  -H 'Cache-Control: no-cache' \
+  -H 'Content-Type: application/json' \
+  -H 'Postman-Token: 2a54b9ec-d92a-ce40-ed4e-78864eb98622' \
   -d '{
-  "name": "influxdb-sink",
+  "name": "influxdb-sink-block",
   "config": {
     "connector.class": "com.datamountaineer.streamreactor.connect.influx.InfluxSinkConnector",
     "tasks.max": "1",
     "topics": "bitcoin.block",
-    "connect.influx.kcql": "INSERT INTO block SELECT time, difficultyTarget, version, blockNo, blockHash FROM influx-topic WITHTIMESTAMP time WITHTAG (difficultyTarget)",
+    "connect.influx.kcql": "INSERT INTO block SELECT time, difficultyTarget, version, blockNo, blockHash FROM bitcoin.block WITHTIMESTAMP time WITHTAG (difficultyTarget)",
 	"connect.influx.url": "http://influx:8086",
 	"connect.influx.db": "bitcoin",
-	"connect.influx.username": "admin",
-	"connect.influx.password": "admin"
+	"connect.influx.username": "root",
+	"connect.influx.password": "root"
   }
 }'
 ```
