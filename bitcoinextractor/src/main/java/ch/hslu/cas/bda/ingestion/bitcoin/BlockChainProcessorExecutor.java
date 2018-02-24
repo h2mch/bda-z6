@@ -52,8 +52,11 @@ public class BlockChainProcessorExecutor {
         processor.onStart();
         processBlocksInternal(blockFileLoader, block -> {
             try {
-                processor.process(blockNoMap.get(block.getHash()), block);
-            } catch (IOException e) {
+                Long blockCount = blockNoMap.get(block.getHash());
+                if (blockCount != null) {
+                    processor.process(blockCount, block);
+                }
+            } catch (Exception e) {
                 logger.error("could not process block at time '{}' ", block.getTime(), e);
             }
         });
