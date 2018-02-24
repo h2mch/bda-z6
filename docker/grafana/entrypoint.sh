@@ -10,12 +10,12 @@ curl -s -H "Content-Type: application/json" \
         "name": "bitcoin",
         "type": "influxdb",
         "typeLogoUrl": "public/app/plugins/datasource/influxdb/img/influxdb_logo.svg",
-        "access": "direct",
-        "url": "http://docker:8086",
+        "access": "proxy",
+        "url": "http://influx:8086",
         "password": "root",
         "user": "root",
         "database": "bitcoin",
-        "basicAuth": false,
+        "basicAuth": true,
         "isDefault": true,
         "jsonData": {}
 }

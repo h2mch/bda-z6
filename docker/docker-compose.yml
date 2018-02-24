@@ -120,8 +120,14 @@ services:
       INFLUXDB_ADMIN_PASSWORD: "root"
       INFLUXDB_USER: "root"
       INFLUXDB_USER_PASSWORD: "root"
+      INFLUXDB_MAX_VALUES_PER_TAG: "0"
+      #INFLUXDB_MAX_VALUES_PER_TAG:  0
+      INFLUXDB_DATA_MAX_VALUES_PER_TAG: "0"
+      #INFLUXDB_DATA_MAX_VALUES_PER_TAG: 0
+      INFLUXDB_UDP_PRECISION: "u"
     volumes:
-      - /home/docker/influxdb:/var/lib/influxdb
+      - /media/heinz/Elements/docker-share/influxdb:/var/lib/influxdb
+      #- /home/docker/influxdb:/var/lib/influxdb
 
   grafana:
     container_name: grafana
