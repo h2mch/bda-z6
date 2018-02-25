@@ -129,6 +129,11 @@ running kafka connect
 
 
 
+root@kafka-connect:/# connect-cli ps
+
+
+
+
 
 # Commands
 ## Kafka Bash
@@ -271,7 +276,7 @@ curl -X POST \
     "connector.class": "com.datamountaineer.streamreactor.connect.influx.InfluxSinkConnector",
     "tasks.max": "1",
     "topics": "bitcoin.block",
-    "connect.influx.kcql": "INSERT INTO block SELECT time, difficultyTarget, version, blockNo, blockHash FROM bitcoin.block WITHTIMESTAMP time WITHTAG (difficultyTarget)",
+    "connect.influx.kcql": "INSERT INTO block SELECT time, difficultyTarget, version, blockNo, blockHash FROM bitcoin.block WITHTIMESTAMP time TIMESTAMPUNIT MILLISECONDS WITHTAG (difficultyTarget)",
 	"connect.influx.url": "http://influx:8086",
 	"connect.influx.db": "bitcoin",
 	"connect.influx.username": "root",
