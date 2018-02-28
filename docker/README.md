@@ -158,7 +158,7 @@ root@kafka:/kafka-topics --delete --topic foo --zookeeper zookeeper:2181
 ```
 or outside the container
 ```bash
-docker exec -it kafka kafka-topics --zookeeper zookeeper:2181 --delete --topic bitcoin.block
+docker exec -it kafka kafka-topics --zookeeper zookeeper:2181 --delete --topic TOPICNAME
 ```
 
 Empty topic workaround (if deletion is not enabled)
