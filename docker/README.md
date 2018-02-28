@@ -212,6 +212,12 @@ InfluxDB shell version: 1.0.0
 > CREATE DATABASE myFoo
 ```
 or via REST
+
+> use bitcoin
+Using database bitcoin
+
+> precision 
+
 ### REST
 
 Create DB
@@ -324,3 +330,9 @@ heinz@x1-carbon:~/source/junk/ksql$ mvn clean compile install -DskipTests
 heinz@x1-carbon:~/source/junk/ksql$ ./bin/ksql-cli local --bootstrap-server localhost:9092
 
 
+
+
+
+bitcoin.block	            1	1	100	0	0	1	0	0.00	505,215
+bitcoin.influx.tx.input	    1	1	100	0	0	1	0	0.00	731,479,402
+bitcoin.influx.tx.output	1	1	100	0	0	1	0	0.00	799,454,392

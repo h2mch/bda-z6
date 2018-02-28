@@ -86,6 +86,36 @@ services:
       CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
       CONNECT_PLUGIN_PATH: "/usr/local/share/kafka/plugins"
 
+  kafka-connect-exchange:
+    container_name: kafka-connect-exchange
+    build: kafka-connect-exchange/.
+    hostname: kafka-connect-exchange
+    depends_on:
+      - zookeeper
+      - kafka
+    ports:
+      - "8084:8083"
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: "kafka:9092"
+      CONNECT_REST_ADVERTISED_HOST_NAME: "kafka-connect-exchange"
+      CONNECT_GROUP_ID: "exchange"
+      CONNECT_REST_PORT: 8083
+      CONNECT_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      CONNECT_CONFIG_STORAGE_TOPIC: "exchange-config"
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_OFFSET_STORAGE_TOPIC: "exchange-offsets"
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_OFFSET_FLUSH_INTERVAL_MS: 10000
+      CONNECT_STATUS_STORAGE_TOPIC: "exchange-status"
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_KEY_CONVERTER: "io.confluent.connect.avro.AvroConverter"
+      CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
+      CONNECT_VALUE_CONVERTER: "io.confluent.connect.avro.AvroConverter"
+      CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
+      CONNECT_PLUGIN_PATH: "/usr/local/share/kafka/plugins"
+
   kafka-manager:
     container_name: kafka-manager
     build: kafka-manager/.
