@@ -24,6 +24,7 @@ The bitcoin files are generated into the mounted files directory `/media/heinz/E
 
 
 ## Landscape
+Start-up
 ```bash
 :~/docker$ docker-compose up -d
 :~/docker$ docker ps -a
@@ -38,7 +39,13 @@ d2faa5c670ed        confluentinc/cp-kafka:4.0.0             "/etc/confluent/dock
 4a6bac9c71a2        influxdb:1.4.3                          "/entrypoint.sh infl…"   21 seconds ago      Up 20 seconds       0.0.0.0:8086->8086/tcp, 0.0.0.0:8090->8090/tcp, 0.0.0.0:8099->8099/tcp, 0.0.0.0:8085->8083/tcp   influx
 ...
 ```
-start ingestion
+
+Update to Latest Version
+```bash
+:~/docker$ docker-compose pull
+```
+
+### Start ingestion
 
 KafkaAvroBlockProducer.java
 17:40:55.632 INFO  [ch.hslu.cas.bda.ingestion.bitcoin.BlockChainProcessorExecutor] - Reading blocks from blk00000.dat to blk01180.dat
