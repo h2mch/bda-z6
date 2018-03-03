@@ -724,4 +724,41 @@ public class ExchangeRateCSV {
     public void setNmSum(String nmSum) {
         this.nmSum = nmSum;
     }
+
+    @Override
+    public String toString() {
+        return "ExchangeRateCSV{" +
+                "date_nr='" + date_nr + '\'' +
+                ", xau='" + xau + '\'' +
+                ", xag='" + xag + '\'' +
+                ", xpt='" + xpt + '\'' +
+                ", cad='" + cad + '\'' +
+                ", eur='" + eur + '\'' +
+                ", jpy='" + jpy + '\'' +
+                ", gbp='" + gbp + '\'' +
+                ", chf='" + chf + '\'' +
+                ", aud='" + aud + '\'' +
+                ", hkd='" + hkd + '\'' +
+                ", nzd='" + nzd + '\'' +
+                ", krw='" + krw + '\'' +
+                ", mxn='" + mxn + '\'' +
+                ", btc_close='" + btc_close + '\'' +
+                ", btc_volume='" + btc_volume + '\'' +
+                ", eth_close='" + eth_close + '\'' +
+                ", eth_volume='" + eth_volume + '\'' +
+                ", ltc_close='" + ltc_close + '\'' +
+                ", ltc_volume='" + ltc_volume + '\'' +
+                ", CHN='" + CHN + '\'' +
+                ", RUS='" + RUS + '\'' +
+                ", KOR='" + KOR + '\'' +
+                ", NGA='" + NGA + '\'' +
+                ", AF='" + AF + '\'' +
+                ", AN='" + AN + '\'' +
+                ", AS='" + AS + '\'' +
+                ", EU='" + EU + '\'' +
+                ", NA='" + NA + '\'' +
+                ", OC='" + OC + '\'' +
+                ", SA='" + SA + '\'' +
+                '}';
+    }
 }
