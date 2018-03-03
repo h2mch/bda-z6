@@ -153,7 +153,7 @@ curl -X POST \
     "connector.class": "com.github.mmolimar.kafka.connect.fs.FsSourceConnector",
     "tasks.max": "1",
 	 "fs.uris" : "file:///tmp/exch_rates_pred.csv",
-	 "topic" : "test",
+	 "topic" : "exchange",
 	 "policy.class": "com.github.mmolimar.kafka.connect.fs.policy.SleepyPolicy",
 	 "policy.sleepy.sleep":"60000",
 	 "policy.sleepy.max_exec":"3",
@@ -324,6 +324,14 @@ InfluxDB shell version: 1.0.0
 Using database bitcoin
 > precision rfc3339
 > SELECT * FROM block LIMIT 3
+name: block
+time                 blockHash                                                        blockNo difficultyTarget difficultyTarget_1 size   size_1 version
+----                 ---------                                                        ------- ---------------- ------------------ ----   ------ -------
+2014-02-22T02:51:17Z 00000000000000012c5fa5bff07e417ed59f83bbce8899b1f2b46713028400b3 287127  419520339        419520339          498773 498773 2
+2014-02-22T09:17:08Z 0000000000000000ba57790d317cbc8020350b884ae8d821669059b6c0da4c5a 287177  419520339        419520339          57305  57305  2
+2014-02-22T10:43:37Z 000000000000000121c62902d96649247836f0a1e712b91c0eaa4447df163b44 287190  419520339        419520339          164199 164199 2
+> DROP MEASUREMENT exchange
+
 ```
 
 
