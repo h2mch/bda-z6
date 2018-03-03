@@ -40,14 +40,137 @@ d2faa5c670ed        confluentinc/cp-kafka:4.0.0             "/etc/confluent/dock
 ...
 ```
 
-Update to Latest Version
+### Database
+Create a new DB inside influx. This can be done with curl:
 ```bash
-:~/docker$ docker-compose pull
+:~/$ curl -X POST 'http://docker:8086/query?q=CREATE%20DATABASE%20bitcoin'
+```
+or with the influx client
+```bash
+:~/docker$ docker exec -it influx /bin/bash
+root@influx:/# influx
+Visit https://enterprise.influxdata.com to register for updates, InfluxDB server management, and monitoring.
+Connected to http://localhost:8086 version 1.0.0
+InfluxDB shell version: 1.0.0
+> CREATE DATABASE bitcoin
 ```
 
-### Start ingestion
+### Kafka Connectors
+kafka topic: "bitcoin.block" --> influx measurement block
+```bash
+:~/ curl -X POST \
+  http://docker:8083/connectors \
+  -H 'Cache-Control: no-cache' \
+  -H 'Content-Type: application/json' \
+  -d '{
+        "name": "influxdb-sink-block",
+        "config": {
+          "connector.class": "com.datamountaineer.streamreactor.connect.influx.InfluxSinkConnector",
+          "tasks.max": "1",
+          "topics": "bitcoin.block",
+          "connect.influx.kcql": "INSERT INTO block SELECT * FROM bitcoin.block WITHTIMESTAMP time WITHTAG (difficultyTarget)",
+      	"connect.influx.url": "http://influx:8086",
+      	"connect.influx.db": "bitcoin",
+      	"connect.influx.username": "root",
+      	"connect.influx.password": "root"
+        }
+      }'
+```
 
-KafkaAvroBlockProducer.java
+
+kafka topic: "bitcoin.influx.tx.input" --> influx measurement input
+```bash
+:~/ curl -X POST \
+  http://docker:8083/connectors \
+  -H 'Cache-Control: no-cache' \
+  -H 'Content-Type: application/json' \
+  -d '{
+        "name": "influxdb-sink-input",
+        "config": {
+          "connector.class": "com.datamountaineer.streamreactor.connect.influx.InfluxSinkConnector",
+          "tasks.max": "1",
+          "topics": "bitcoin.influx.tx.input",
+          "connect.influx.kcql": "INSERT INTO input SELECT * FROM bitcoin.influx.tx.input WITHTIMESTAMP time TIMESTAMPUNIT=MICROSECONDS",
+      	"connect.influx.url": "http://influx:8086",
+      	"connect.influx.db": "bitcoin",
+      	"connect.influx.username": "root",
+      	"connect.influx.password": "root"
+        }
+      }'
+```
+
+kafka topic: "bitcoin.influx.tx.output" --> influx measurement output
+```bash
+:~/ curl -X POST \
+  http://docker:8083/connectors \
+  -H 'Cache-Control: no-cache' \
+  -H 'Content-Type: application/json' \
+  -d '{
+        "name": "influxdb-sink-output",
+        "config": {
+          "connector.class": "com.datamountaineer.streamreactor.connect.influx.InfluxSinkConnector",
+          "tasks.max": "1",
+          "topics": "bitcoin.influx.tx.output",
+          "connect.influx.kcql": "INSERT INTO output SELECT * FROM bitcoin.influx.tx.output WITHTIMESTAMP time TIMESTAMPUNIT=MICROSECONDS",
+      	"connect.influx.url": "http://influx:8086",
+      	"connect.influx.db": "bitcoin",
+      	"connect.influx.username": "root",
+      	"connect.influx.password": "root"
+        }
+      }'
+```
+
+kafka topic: "exchange" --> influx measurement exchange
+```bash
+:~/ curl -X POST \
+  http://docker:8083/connectors \
+  -H 'Cache-Control: no-cache' \
+  -H 'Content-Type: application/json' \
+  -d '{
+        "name": "influxdb-exchange",
+        "config": {
+          "connector.class": "com.datamountaineer.streamreactor.connect.influx.InfluxSinkConnector",
+          "tasks.max": "1",
+          "topics": "exchange",
+          "connect.influx.kcql": "INSERT INTO exchange SELECT * FROM exchange WITHTIMESTAMP time TIMESTAMPUNIT=MICROSECONDS",
+      	"connect.influx.url": "http://influx:8086",
+      	"connect.influx.db": "bitcoin",
+      	"connect.influx.username": "root",
+      	"connect.influx.password": "root"
+        }
+      }'
+```
+
+csv file `exch_rates_pred.cvs` --> kafka topic: "exchange" 
+```bash
+curl -X POST \
+  http://docker:8084/connectors \
+  -H 'Cache-Control: no-cache' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "name": "exchange",
+  "config": {
+    "connector.class": "com.github.mmolimar.kafka.connect.fs.FsSourceConnector",
+    "tasks.max": "1",
+	 "fs.uris" : "file:///tmp/exch_rates_pred.csv",
+	 "topic" : "test",
+	 "policy.class": "com.github.mmolimar.kafka.connect.fs.policy.SleepyPolicy",
+	 "policy.sleepy.sleep":"60000",
+	 "policy.sleepy.max_exec":"3",
+	 "policy.recursive" : false,
+	 "policy.regexp" : ".*",
+	 "file_reader.class" : "com.github.mmolimar.kafka.connect.fs.file.reader.DelimitedTextFileReader",
+	 "file_reader.delimited.token" : ",",
+	 "file_reader.delimited.header": true
+  }
+}'
+```
+
+
+## Start ingestion
+### Bitcoin Block
+Start `KafkaAvroBlockProducer.java` to create the block information from bitcoin and send them to the kafka topic called `bitcoin.block`.
+```bash
 17:40:55.632 INFO  [ch.hslu.cas.bda.ingestion.bitcoin.BlockChainProcessorExecutor] - Reading blocks from blk00000.dat to blk01180.dat
 17:40:55.633 INFO  [ch.hslu.cas.bda.ingestion.bitcoin.BlockChainProcessorExecutor] - Step 1: Pre-processing
 17:40:55.852 INFO  [ch.hslu.cas.bda.ingestion.bitcoin.BlockChainProcessorExecutor] - Start 2018-02-23T16:40:55.832Z
@@ -87,9 +210,11 @@ KafkaAvroBlockProducer.java
 01:12:58.191 INFO  [ch.hslu.cas.bda.ingestion.bitcoin.BlockChainProcessorExecutor] - Last block processed: No: 509491 - Date: Fri Feb 16 21:23:56 CET 2018 - Hash: 000000000000000000189b29b1bd90d2911936118b36cafa420fd1d8a8275fc2
 01:12:58.192 INFO  [ch.hslu.cas.bda.ingestion.bitcoin.BlockChainProcessorExecutor] - Total blocks processed: 509492
 01:12:58.192 INFO  [ch.hslu.cas.bda.ingestion.bitcoin.BlockChainProcessorExecutor] - Total execution time: 15448s
+```
 
-
-KafkaBlockToInfluxStreamTxInput.java
+Start `KafkaBlockToInfluxStreamTxInput.java` to create the input data from block and send them to the kafka topic called `bitcoin.influx.tx.input`.
+```bash
+.java
 06:36:58.931 INFO  [ch.hslu.cas.bda.aggregation.bitcoin.KafkaBlockToInfluxStreamTxInput] - Block: 0 / 000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f
 06:36:59.378 WARN  [org.apache.kafka.clients.NetworkClient] - [Producer clientId=BitcoinBlockConsumerTxInput-StreamThread-1-producer] Error while fetching metadata with correlation id 1 : {bitcoin.influx.tx.input=LEADER_NOT_AVAILABLE}
 06:36:59.790 INFO  [ch.hslu.cas.bda.aggregation.bitcoin.KafkaBlockToInfluxStreamTxInput] - Block: 10000 / 0000000099c744455f58e6c6e98b671e1bf7f37346bfd4cf5d0274ad8ee660cb
@@ -102,11 +227,10 @@ KafkaBlockToInfluxStreamTxInput.java
 07:06:05.615 INFO  [ch.hslu.cas.bda.aggregation.bitcoin.KafkaBlockToInfluxStreamTxInput] - Block: 480000 / 000000000000000001024c5d7a766b173fc9dbb1be1a4dc7e039e631fd96a8b1
 07:07:53.484 INFO  [ch.hslu.cas.bda.aggregation.bitcoin.KafkaBlockToInfluxStreamTxInput] - Block: 490000 / 000000000000000000de069137b17b8d5a3dfbd5b145b2dcfb203f15d0c4de90
 07:10:03.041 INFO  [ch.hslu.cas.bda.aggregation.bitcoin.KafkaBlockToInfluxStreamTxInput] - Block: 500000 / 00000000000000000024fb37364cbf81fd49cc2d51c09c75c35433c3a1945d04
+```
 
-
-
-
-KafkaBlockToInfluxStreamTxOutput.java
+Start `KafkaBlockToInfluxStreamTxOutput.java` to create the output data from block and send them to the kafka topic called `bitcoin.influx.tx.output`.
+```bash
 09:20:49.054 INFO  [ch.hslu.cas.bda.aggregation.bitcoin.KafkaBlockToInfluxStreamTxOutput] - Block: 0 / 000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f
 09:20:49.543 WARN  [org.apache.kafka.clients.NetworkClient] - [Producer clientId=BitcoinBlockConsumerTxOutput-StreamThread-1-producer] Error while fetching metadata with correlation id 1 : {bitcoin.influx.tx.output=LEADER_NOT_AVAILABLE}
 09:20:50.231 INFO  [ch.hslu.cas.bda.aggregation.bitcoin.KafkaBlockToInfluxStreamTxOutput] - Block: 10000 / 0000000099c744455f58e6c6e98b671e1bf7f37346bfd4cf5d0274ad8ee660cb
@@ -116,35 +240,15 @@ KafkaBlockToInfluxStreamTxOutput.java
 09:48:34.323 INFO  [ch.hslu.cas.bda.aggregation.bitcoin.KafkaBlockToInfluxStreamTxOutput] - Block: 480000 / 000000000000000001024c5d7a766b173fc9dbb1be1a4dc7e039e631fd96a8b1
 09:50:26.865 INFO  [ch.hslu.cas.bda.aggregation.bitcoin.KafkaBlockToInfluxStreamTxOutput] - Block: 490000 / 000000000000000000de069137b17b8d5a3dfbd5b145b2dcfb203f15d0c4de90
 09:52:56.857 INFO  [ch.hslu.cas.bda.aggregation.bitcoin.KafkaBlockToInfluxStreamTxOutput] - Block: 500000 / 00000000000000000024fb37364cbf81fd49cc2d51c09c75c35433c3a1945d04
+```
 
 
 
 
 
 
-create influxDB
-curl -X POST 'http://docker:8086/query?q=CREATE%20DATABASE%20bitcoin'
-
-
-
-running kafka connect
-[2018-02-24 12:39:27,674] INFO WorkerSinkTask{id=influxdb-sink-output-0} Committing offsets asynchronously using sequence number 1: {bitcoin.influx.tx.output-0=OffsetAndMetadata{offset=129827, metadata=''}} (org.apache.kafka.connect.runtime.WorkerSinkTask)
-[2018-02-24 12:39:27,733] INFO WorkerSinkTask{id=influxdb-sink-input-0} Committing offsets asynchronously using sequence number 1: {bitcoin.influx.tx.input-0=OffsetAndMetadata{offset=7674314, metadata=''}} (org.apache.kafka.connect.runtime.WorkerSinkTask)
-[2018-02-24 12:39:27,774] INFO WorkerSinkTask{id=influxdb-sink-block-notags-0} Committing offsets asynchronously using sequence number 1: {bitcoin.block-0=OffsetAndMetadata{offset=426684, metadata=''}} (org.apache.kafka.connect.runtime.WorkerSinkTask)
-[2018-02-24 12:39:37,651] INFO WorkerSinkTask{id=influxdb-sink-input-0} Committing offsets asynchronously using sequence number 2: {bitcoin.influx.tx.input-0=OffsetAndMetadata{offset=7906849, metadata=''}} (org.apache.kafka.connect.runtime.WorkerSinkTask)
-[2018-02-24 12:39:37,654] INFO Empty list of records received. (com.datamountaineer.streamreactor.connect.influx.InfluxSinkTask)
-
-
-
-root@kafka-connect:/# connect-cli ps
-
-
-
-
-
-# Commands
+# Collection of usefull commands
 ## Kafka Bash
-
 Login into running kafka broker
 ```bash
 docker exec -it kafka /bin/bash
@@ -166,6 +270,7 @@ root@kafka:/kafka-topics --delete --topic foo --zookeeper zookeeper:2181
 or outside the container
 ```bash
 docker exec -it kafka kafka-topics --zookeeper zookeeper:2181 --delete --topic TOPICNAME
+docker exec -it kafka kafka-topics --zookeeper zookeeper:2181 --config retention.ms=1000 --alter --topic TOPICNAME
 ```
 
 Empty topic workaround (if deletion is not enabled)
@@ -181,7 +286,6 @@ root@kafka:/# kafka-console-consumer --zookeeper zookeeper:2181 --topic bitcoin.
 
 ## Kafka HTTP
 This is provided by the docker kafka-rest container
-
 
 Create Consumer
 ```bash
@@ -207,7 +311,6 @@ $ curl -X GET \
 
 
 ## Influx
-### Bash
 Create new DB
 ```bash
 hem@zrhn1810 MINGW64 /c/source/CAS-BDA/docker/confluent (master)
@@ -216,44 +319,12 @@ root@influx:/# influx
 Visit https://enterprise.influxdata.com to register for updates, InfluxDB server management, and monitoring.
 Connected to http://localhost:8086 version 1.0.0
 InfluxDB shell version: 1.0.0
-> CREATE DATABASE myFoo
-```
-or via REST
-
+> CREATE DATABASE bitcoin
 > use bitcoin
 Using database bitcoin
-
-> precision 
-
-### REST
-
-Create DB
-http://docker:8086/query?q=CREATE DATABASE myFoo
-
-
-## Influx
-### REST
-Create Datasource
-```bash
-curl -X POST \
-  http://docker:3000/api/datasources \
-  -H 'cache-control: no-cache' \
-  -H 'content-type: application/json' \
-  -d '    {
-        "name": "bitcoin",
-        "type": "influxdb",
-        "typeLogoUrl": "public/app/plugins/datasource/influxdb/img/influxdb_logo.svg",
-        "access": "direct",
-        "url": "http://docker:8086",
-        "password": "root",
-        "user": "root",
-        "database": "bitcoin",
-        "basicAuth": false,
-        "isDefault": true,
-        "jsonData": {}
-    }' 
+> precision rfc3339
+> SELECT * FROM block LIMIT 3
 ```
-
 
 
 ## Kafka Connect Bash
@@ -276,28 +347,12 @@ Copy the jar file into the Docker `confluent\kafka-connect` folder
 A new updated version is public available. see: https://lenses.stream/connectors/sink/influx.html
 
 
-Install Sink
+## docker-compose
+Update to Latest Version
 ```bash
-curl -X POST \
-  http://docker:8083/connectors \
-  -H 'Cache-Control: no-cache' \
-  -H 'Content-Type: application/json' \
-  -H 'Postman-Token: 2a54b9ec-d92a-ce40-ed4e-78864eb98622' \
-  -d '{
-  "name": "influxdb-sink-block",
-  "config": {
-    "connector.class": "com.datamountaineer.streamreactor.connect.influx.InfluxSinkConnector",
-    "tasks.max": "1",
-    "topics": "bitcoin.block",
-    "connect.influx.kcql": "INSERT INTO block SELECT time, difficultyTarget, version, blockNo, blockHash FROM bitcoin.block WITHTIMESTAMP time TIMESTAMPUNIT MILLISECONDS WITHTAG (difficultyTarget)",
-	"connect.influx.url": "http://influx:8086",
-	"connect.influx.db": "bitcoin",
-	"connect.influx.username": "root",
-	"connect.influx.password": "root"
-  }
-}'
-```
+:~/docker$ docker-compose pull
 
+```
 
 
 # Past Bin
@@ -330,12 +385,13 @@ $ sudo usermod -aG docker $USER
 # 3. Log out and log back in so that your group membership is re-evaluated.
 ```
 
-
+## ksql
+```bash
 heinz@x1-carbon:~/source/junk$ git clone https://github.com/confluentinc/ksql.git  
 heinz@x1-carbon:~/source/junk$ cd ksql  
 heinz@x1-carbon:~/source/junk/ksql$ mvn clean compile install -DskipTests
 heinz@x1-carbon:~/source/junk/ksql$ ./bin/ksql-cli local --bootstrap-server localhost:9092
-
+```
 
 
 
