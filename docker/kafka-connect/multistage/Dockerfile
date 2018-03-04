@@ -5,7 +5,8 @@ RUN git clone https://github.com/Landoop/stream-reactor.git
 FROM gradle as build
 WORKDIR /app
 COPY --from=clone /app/stream-reactor /app
-RUN ./gradlew :kafka-connect-influxdb:shadowJar
+USER root
+RUN ./gradlew -x test :kafka-connect-influxdb:shadowJar
 
 
 FROM confluentinc/cp-kafka-connect

@@ -58,7 +58,8 @@ services:
 
   kafka-connect:
     container_name: kafka-connect
-    build: kafka-connect/.
+    build: kafka-connect/multistage/.
+    #build: kafka-connect/.
     hostname: kafka-connect
     depends_on:
       - zookeeper
