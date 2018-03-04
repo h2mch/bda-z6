@@ -89,7 +89,8 @@ services:
 
   kafka-connect-exchange:
     container_name: kafka-connect-exchange
-    build: kafka-connect-exchange/.
+    #build: kafka-connect-exchange/.
+    build: kafka-connect-exchange/multistage/.
     hostname: kafka-connect-exchange
     depends_on:
       - zookeeper
@@ -115,7 +116,8 @@ services:
       CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
-      CONNECT_PLUGIN_PATH: "/usr/local/share/kafka/plugins"
+      #CONNECT_PLUGIN_PATH: "/usr/local/share/kafka/plugins"
+      CONNECT_PLUGIN_PATH: "/usr/share/java,/etc/kafka-connect/jars"
 
   kafka-manager:
     container_name: kafka-manager
