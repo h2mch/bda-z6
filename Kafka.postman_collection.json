@@ -1,75 +1,48 @@
 {
-	"variables": [],
 	"info": {
 		"name": "Kafka",
-		"_postman_id": "e75bc2a5-26f4-1e20-441d-be3ec39d4143",
+		"_postman_id": "2ffc22e9-7058-353a-3723-9da04e85f9c2",
 		"description": "",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "Kafka-Connect-Sink-Influx block",
-			"request": {
-				"url": "http://docker:8083/connectors",
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"name\": \"influxdb-sink-block\",\r\n  \"config\": {\r\n    \"connector.class\": \"com.datamountaineer.streamreactor.connect.influx.InfluxSinkConnector\",\r\n    \"tasks.max\": \"1\",\r\n    \"topics\": \"bitcoin.block\",\r\n    \"connect.influx.kcql\": \"INSERT INTO block SELECT time, difficultyTarget, version, blockNo, blockHash FROM bitcoin.block WITHTIMESTAMP time\",\r\n\t\"connect.influx.url\": \"http://influx:8086\",\r\n\t\"connect.influx.db\": \"bitcoin\",\r\n\t\"connect.influx.username\": \"root\",\r\n\t\"connect.influx.password\": \"root\"\r\n  }\r\n}"
-				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "Kafka-Connect-Sink-Influx exchange",
-			"request": {
-				"url": "http://docker:8083/connectors",
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"name\": \"influxdb-sink-exchange\",\r\n  \"config\": {\r\n    \"connector.class\": \"com.datamountaineer.streamreactor.connect.influx.InfluxSinkConnector\",\r\n    \"tasks.max\": \"1\",\r\n    \"topics\": \"bitcoin.exchange\",\r\n    \"connect.influx.kcql\": \"INSERT INTO exchange SELECT time, open, high, low, close, volumeBTC, volumeDollar, weightedPrice FROM bitcoin.exchange WITHTIMESTAMP time\",\r\n\t\"connect.influx.url\": \"http://influx:8086\",\r\n\t\"connect.influx.db\": \"bitcoin\",\r\n\t\"connect.influx.username\": \"root\",\r\n\t\"connect.influx.password\": \"root\"\r\n  }\r\n}"
-				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
 			"name": "Schema-Registry  - GET Subjects",
 			"request": {
-				"url": "http://docker:8081/bitcoinblock",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/vnd.schemaregistry.v1+json",
-						"description": ""
+						"value": "application/vnd.schemaregistry.v1+json"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "[\r\n  {\r\n    \"type\": \"record\",\r\n    \"name\": \"AvTransaction\",\r\n    \"namespace\": \"ch.hslu.cas.bda.message.bitcoin\",\r\n    \"fields\": [\r\n      {\r\n        \"name\": \"version\",\r\n        \"type\": \"long\"\r\n      },\r\n      {\r\n        \"name\": \"vin\",\r\n        \"type\": [\r\n          \"null\",\r\n          {\r\n            \"type\": \"array\",\r\n            \"items\": {\r\n              \"type\": \"record\",\r\n              \"name\": \"Input\",\r\n              \"fields\": [\r\n                {\r\n                  \"name\": \"txid\",\r\n                  \"type\": \"string\"\r\n                },\r\n                {\r\n                  \"name\": \"vout\",\r\n                  \"type\": \"long\"\r\n                },\r\n                {\r\n                  \"name\": \"sequence\",\r\n                  \"type\": \"long\"\r\n                }\r\n              ]\r\n            }\r\n          }\r\n        ],\r\n        \"default\": null\r\n      },\r\n      {\r\n        \"name\": \"vout\",\r\n        \"type\": [\r\n          \"null\",\r\n          {\r\n            \"type\": \"array\",\r\n            \"items\": {\r\n              \"type\": \"record\",\r\n              \"name\": \"Output\",\r\n              \"fields\": [\r\n                {\r\n                  \"name\": \"value\",\r\n                  \"type\": \"long\"\r\n                },\r\n                {\r\n                  \"name\": \"address\",\r\n                  \"type\": \"string\"\r\n                }\r\n              ]\r\n            }\r\n          }\r\n        ],\r\n        \"default\": null\r\n      }\r\n    ]\r\n  },\r\n  {\r\n    \"type\": \"record\",\r\n    \"name\": \"AvBlock\",\r\n    \"namespace\": \"ch.hslu.cas.bda.message.bitcoin\",\r\n    \"fields\": [\r\n      {\r\n        \"name\": \"transactions\",\r\n        \"type\": {\r\n          \"type\": \"array\",\r\n          \"items\": \"AvTransaction\"\r\n        }\r\n      },\r\n      {\r\n        \"name\": \"blockHash\",\r\n        \"type\": \"string\"\r\n      },\r\n      {\r\n        \"name\": \"previousBlockHash\",\r\n        \"type\": \"string\"\r\n      },\r\n      {\r\n        \"name\": \"time\",\r\n        \"type\": \"long\"\r\n      },\r\n      {\r\n        \"name\": \"difficultyTarget\",\r\n        \"type\": \"long\"\r\n      },\r\n      {\r\n        \"name\": \"version\",\r\n        \"type\": \"long\"\r\n      },\r\n      {\r\n        \"name\": \"blockNo\",\r\n        \"type\": \"long\"\r\n      }\r\n    ]\r\n  }\r\n]"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://docker:8081/bitcoinblock",
+					"protocol": "http",
+					"host": [
+						"docker"
+					],
+					"port": "8081",
+					"path": [
+						"bitcoinblock"
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "InfluxDB - CreateDB",
 			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "http://docker:8086/query?q=CREATE DATABASE bitcoin",
 					"protocol": "http",
@@ -84,22 +57,22 @@
 						{
 							"key": "q",
 							"value": "CREATE DATABASE bitcoin",
-							"equals": true,
-							"description": ""
+							"equals": true
 						}
-					],
-					"variable": []
-				},
-				"method": "POST",
-				"header": [],
-				"body": {},
-				"description": ""
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "InfluxDB - DropDB",
 			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "http://docker:8086/query?q=DROP DATABASE bitcoin",
 					"protocol": "http",
@@ -114,15 +87,42 @@
 						{
 							"key": "q",
 							"value": "DROP DATABASE bitcoin",
-							"equals": true,
-							"description": ""
+							"equals": true
 						}
-					],
-					"variable": []
-				},
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "InfluxDB - Drop Measurement",
+			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {},
+				"url": {
+					"raw": "http://docker:8086/query?db=bitcoin&q=DROP MEASUREMENT exchange",
+					"protocol": "http",
+					"host": [
+						"docker"
+					],
+					"port": "8086",
+					"path": [
+						"query"
+					],
+					"query": [
+						{
+							"key": "db",
+							"value": "bitcoin",
+							"equals": true
+						},
+						{
+							"key": "q",
+							"value": "DROP MEASUREMENT exchange",
+							"equals": true
+						}
+					]
+				},
 				"description": ""
 			},
 			"response": []
@@ -130,6 +130,12 @@
 		{
 			"name": "InfluxDB - Select",
 			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "http://docker:8086/query?pretty=true&db=bitcoin&q=select * from block",
 					"protocol": "http",
@@ -144,27 +150,57 @@
 						{
 							"key": "pretty",
 							"value": "true",
-							"equals": true,
-							"description": ""
+							"equals": true
 						},
 						{
 							"key": "db",
 							"value": "bitcoin",
-							"equals": true,
-							"description": ""
+							"equals": true
 						},
 						{
 							"key": "q",
 							"value": "select * from block",
-							"equals": true,
-							"description": ""
+							"equals": true
 						}
-					],
-					"variable": []
-				},
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "InfluxDB - Show Series",
+			"request": {
 				"method": "GET",
 				"header": [],
 				"body": {},
+				"url": {
+					"raw": "http://docker:8086/query?pretty=true&db=bitcoin&q=show series",
+					"protocol": "http",
+					"host": [
+						"docker"
+					],
+					"port": "8086",
+					"path": [
+						"query"
+					],
+					"query": [
+						{
+							"key": "pretty",
+							"value": "true",
+							"equals": true
+						},
+						{
+							"key": "db",
+							"value": "bitcoin",
+							"equals": true
+						},
+						{
+							"key": "q",
+							"value": "show series",
+							"equals": true
+						}
+					]
+				},
 				"description": ""
 			},
 			"response": []
@@ -172,41 +208,233 @@
 		{
 			"name": "Grafana - Create Datasource",
 			"request": {
-				"url": "http://docker:3000/api/datasources",
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJrIjoielpEQnpTZWlnam95SHIzSUxDc2Z1SzBTS2JPd0ZLWk4iLCJuIjoicG9zdG1hbiIsImlkIjoxfQ==",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "    {\n        \"name\": \"bitcoin2\",\n        \"type\": \"influxdb\",\n        \"typeLogoUrl\": \"public/app/plugins/datasource/influxdb/img/influxdb_logo.svg\",\n        \"access\": \"direct\",\n        \"url\": \"http://docker:8086\",\n        \"password\": \"root\",\n        \"user\": \"root\",\n        \"database\": \"bitcoin\",\n        \"basicAuth\": false,\n        \"isDefault\": true,\n        \"jsonData\": {}\n    }"
+					"raw": "    {\n        \"name\": \"bitcoin\",\n        \"type\": \"influxdb\",\n        \"typeLogoUrl\": \"public/app/plugins/datasource/influxdb/img/influxdb_logo.svg\",\n        \"access\": \"direct\",\n        \"url\": \"http://docker:8086\",\n        \"password\": \"root\",\n        \"user\": \"root\",\n        \"database\": \"bitcoin\",\n        \"basicAuth\": false,\n        \"isDefault\": true,\n        \"jsonData\": {}\n    }"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://admin:admin@docker:3000/api/datasources",
+					"protocol": "http",
+					"host": [
+						"docker"
+					],
+					"auth": {
+						"user": "admin",
+						"password": "admin"
+					},
+					"port": "3000",
+					"path": [
+						"api",
+						"datasources"
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "Kafka-REST-ShowTopics",
 			"request": {
-				"url": "http://docker:8080/topics",
 				"method": "GET",
 				"header": [],
-				"body": {},
-				"description": ""
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://docker:8080/topics",
+					"protocol": "http",
+					"host": [
+						"docker"
+					],
+					"port": "8080",
+					"path": [
+						"topics"
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "Kafka-REST-ShowTopic Exchange",
 			"request": {
-				"url": "http://docker:8080/topics/bitcoin.exchange",
 				"method": "GET",
 				"header": [],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://docker:8080/topics/bitcoin.exchange",
+					"protocol": "http",
+					"host": [
+						"docker"
+					],
+					"port": "8080",
+					"path": [
+						"topics",
+						"bitcoin.exchange"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "kafka-connect influx output",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"influxdb-sink-output\",\r\n  \"config\": {\r\n    \"connector.class\": \"com.datamountaineer.streamreactor.connect.influx.InfluxSinkConnector\",\r\n    \"tasks.max\": \"1\",\r\n    \"topics\": \"bitcoin.influx.tx.output\",\r\n    \"connect.influx.kcql\": \"INSERT INTO output SELECT * FROM bitcoin.influx.tx.output WITHTIMESTAMP time TIMESTAMPUNIT=MICROSECONDS\",\r\n\t\"connect.influx.url\": \"http://influx:8086\",\r\n\t\"connect.influx.db\": \"bitcoin\",\r\n\t\"connect.influx.username\": \"root\",\r\n\t\"connect.influx.password\": \"root\"\r\n  }\r\n}"
+				},
+				"url": {
+					"raw": "http://docker:8083/connectors",
+					"protocol": "http",
+					"host": [
+						"docker"
+					],
+					"port": "8083",
+					"path": [
+						"connectors"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "kafka connect influx block",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"influxdb-sink-block\",\r\n  \"config\": {\r\n    \"connector.class\": \"com.datamountaineer.streamreactor.connect.influx.InfluxSinkConnector\",\r\n    \"tasks.max\": \"1\",\r\n    \"topics\": \"bitcoin.block\",\r\n    \"connect.influx.kcql\": \"INSERT INTO block SELECT * FROM bitcoin.block WITHTIMESTAMP time WITHTAG (difficultyTarget)\",\r\n\t\"connect.influx.url\": \"http://influx:8086\",\r\n\t\"connect.influx.db\": \"bitcoin\",\r\n\t\"connect.influx.username\": \"root\",\r\n\t\"connect.influx.password\": \"root\"\r\n  }\r\n}"
+				},
+				"url": {
+					"raw": "http://docker:8083/connectors",
+					"protocol": "http",
+					"host": [
+						"docker"
+					],
+					"port": "8083",
+					"path": [
+						"connectors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "kafka-connect influx input",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"influxdb-sink-input\",\r\n  \"config\": {\r\n    \"connector.class\": \"com.datamountaineer.streamreactor.connect.influx.InfluxSinkConnector\",\r\n    \"tasks.max\": \"1\",\r\n    \"topics\": \"bitcoin.influx.tx.input\",\r\n    \"connect.influx.kcql\": \"INSERT INTO input SELECT * FROM bitcoin.influx.tx.input WITHTIMESTAMP time TIMESTAMPUNIT=MICROSECONDS\",\r\n\t\"connect.influx.url\": \"http://influx:8086\",\r\n\t\"connect.influx.db\": \"bitcoin\",\r\n\t\"connect.influx.username\": \"root\",\r\n\t\"connect.influx.password\": \"root\"\r\n  }\r\n}"
+				},
+				"url": {
+					"raw": "http://docker:8083/connectors",
+					"protocol": "http",
+					"host": [
+						"docker"
+					],
+					"port": "8083",
+					"path": [
+						"connectors"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "kafka-connect influx exchange",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"influxdb-exchange\",\r\n  \"config\": {\r\n    \"connector.class\": \"com.datamountaineer.streamreactor.connect.influx.InfluxSinkConnector\",\r\n    \"tasks.max\": \"1\",\r\n    \"topics\": \"exchange\",\r\n    \"connect.influx.kcql\": \"INSERT INTO exchange SELECT * FROM exchange WITHTIMESTAMP time TIMESTAMPUNIT=SECONDS\",\r\n\t\"connect.influx.url\": \"http://influx:8086\",\r\n\t\"connect.influx.db\": \"bitcoin\",\r\n\t\"connect.influx.username\": \"root\",\r\n\t\"connect.influx.password\": \"root\"\r\n  }\r\n}"
+				},
+				"url": {
+					"raw": "http://docker:8083/connectors",
+					"protocol": "http",
+					"host": [
+						"docker"
+					],
+					"port": "8083",
+					"path": [
+						"connectors"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Kafka-Connect-file",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"exchange\",\r\n  \"config\": {\r\n    \"connector.class\": \"com.github.mmolimar.kafka.connect.fs.FsSourceConnector\",\r\n    \"tasks.max\": \"1\",\r\n\t \"fs.uris\" : \"file:///tmp/exch_rates_pred.csv\",\r\n\t \"topic\" : \"exchange.raw\",\r\n\t \"policy.class\": \"com.github.mmolimar.kafka.connect.fs.policy.SleepyPolicy\",\r\n\t \"policy.sleepy.sleep\":\"60000\",\r\n\t \"policy.sleepy.max_exec\":\"3\",\r\n\t \"policy.recursive\" : false,\r\n\t \"policy.regexp\" : \".*\",\r\n\t \"file_reader.class\" : \"com.github.mmolimar.kafka.connect.fs.file.reader.DelimitedTextFileReader\",\r\n\t \"file_reader.delimited.token\" : \",\",\r\n\t \"file_reader.delimited.header\": true\r\n  }\r\n}"
+				},
+				"url": {
+					"raw": "http://docker:8084/connectors",
+					"protocol": "http",
+					"host": [
+						"docker"
+					],
+					"port": "8084",
+					"path": [
+						"connectors"
+					]
+				},
 				"description": ""
 			},
 			"response": []
