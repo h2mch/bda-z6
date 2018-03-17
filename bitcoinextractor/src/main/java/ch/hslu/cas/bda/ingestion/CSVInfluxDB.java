@@ -70,40 +70,112 @@ public class CSVInfluxDB {
             long unixTimeInSeconds = date.atStartOfDay(ZoneId.systemDefault()).toEpochSecond();
 
             try {
-
-                influxDB.write(Point.measurement("exchange")
+                // Tags are meta data information
+                // Tagset ist the collection of all tags
+                influxDB.write(Point.measurement("gold")
                         .time(unixTimeInSeconds, TimeUnit.SECONDS)
-                        .addField("gold", new BigDecimal(exchangeRateCSV.getXau()).movePointRight(4))
-                        .addField("silber", new BigDecimal(exchangeRateCSV.getXag()).movePointRight(4))
-                        .addField("platin", new BigDecimal(exchangeRateCSV.getXpt()).movePointRight(4))
-                        .addField("eur", new BigDecimal(exchangeRateCSV.getEur()).movePointRight(4))
-                        .addField("cad", new BigDecimal(exchangeRateCSV.getCad()).movePointRight(4))
-                        .addField("jpy", new BigDecimal(exchangeRateCSV.getJpy()).movePointRight(4))
-                        .addField("gbp", new BigDecimal(exchangeRateCSV.getGbp()).movePointRight(4))
-                        .addField("chf", new BigDecimal(exchangeRateCSV.getChf()).movePointRight(4))
-                        .addField("aud", new BigDecimal(exchangeRateCSV.getAud()).movePointRight(4))
-                        .addField("hkd", new BigDecimal(exchangeRateCSV.getHkd()).movePointRight(4))
-                        .addField("nzd", new BigDecimal(exchangeRateCSV.getNzd()).movePointRight(4))
-                        .addField("krw", new BigDecimal(exchangeRateCSV.getKrw()).movePointRight(4))
-                        .addField("mxn", new BigDecimal(exchangeRateCSV.getMxn()).movePointRight(4))
-                        .addField("btc_close", new BigDecimal(exchangeRateCSV.getBtc_close()).movePointRight(4))
-                        .addField("btc_volume", new BigDecimal(exchangeRateCSV.getBtc_volume()).movePointRight(4))
-                        .addField("eth_close", new BigDecimal(exchangeRateCSV.getEth_close()).movePointRight(4))
-                        .addField("eth_volume", new BigDecimal(exchangeRateCSV.getEth_volume()).movePointRight(4))
-                        .addField("ltc_close", new BigDecimal(exchangeRateCSV.getLtc_close()).movePointRight(4))
-                        .addField("ltc_volume", new BigDecimal(exchangeRateCSV.getLtc_volume()).movePointRight(4))
-                        .addField("event_CHN", new BigDecimal(exchangeRateCSV.getCHN()).movePointRight(4))
-                        .addField("event_RUS", new BigDecimal(exchangeRateCSV.getRUS()).movePointRight(4))
-                        .addField("event_KOR", new BigDecimal(exchangeRateCSV.getKOR()).movePointRight(4))
-                        .addField("event_NGA", new BigDecimal(exchangeRateCSV.getNGA()).movePointRight(4))
-                        .addField("event_AF", StringUtils.isEmpty(exchangeRateCSV.getAF()) ? 0 : new BigDecimal(exchangeRateCSV.getAF()).movePointRight(4))
-                        .addField("event_AN", StringUtils.isEmpty(exchangeRateCSV.getAN()) ? 0 : new BigDecimal(exchangeRateCSV.getAN()).movePointRight(4))
-                        .addField("event_AS", StringUtils.isEmpty(exchangeRateCSV.getAS()) ? 0 : new BigDecimal(exchangeRateCSV.getAS()).movePointRight(4))
-                        .addField("event_EU", StringUtils.isEmpty(exchangeRateCSV.getEU()) ? 0 : new BigDecimal(exchangeRateCSV.getEU()).movePointRight(4))
-                        .addField("event_NA", StringUtils.isEmpty(exchangeRateCSV.getNA()) ? 0 : new BigDecimal(exchangeRateCSV.getNA()).movePointRight(4))
-                        .addField("event_OC", StringUtils.isEmpty(exchangeRateCSV.getOC()) ? 0 : new BigDecimal(exchangeRateCSV.getOC()).movePointRight(4))
-                        .addField("event_SA", StringUtils.isEmpty(exchangeRateCSV.getSA()) ? 0 : new BigDecimal(exchangeRateCSV.getSA()).movePointRight(4))
+                        .addField("price", new BigDecimal(exchangeRateCSV.getXau()))
+                        .addField("volty", new BigDecimal(exchangeRateCSV.getXau_20_volty()))
+                        .addField("prc", new BigDecimal(exchangeRateCSV.getXau_prc()).movePointRight(2))
                         .build());
+
+                influxDB.write(Point.measurement("silber")
+                        .time(unixTimeInSeconds, TimeUnit.SECONDS)
+                        .addField("price", new BigDecimal(exchangeRateCSV.getXag()))
+                        .addField("volty", new BigDecimal(exchangeRateCSV.getXag_20_volty()))
+                        .addField("prc", new BigDecimal(exchangeRateCSV.getXag_prc()).movePointRight(2))
+                        .build());
+
+
+                influxDB.write(Point.measurement("chf")
+                        .time(unixTimeInSeconds, TimeUnit.SECONDS)
+                        .addField("price", new BigDecimal(exchangeRateCSV.getChf()))
+                        .addField("volty", new BigDecimal(exchangeRateCSV.getChf_20_volty()))
+                        .addField("prc", new BigDecimal(exchangeRateCSV.getChf_prc()).movePointRight(2))
+                        .build());
+
+                influxDB.write(Point.measurement("eur")
+                        .time(unixTimeInSeconds, TimeUnit.SECONDS)
+                        .addField("price", new BigDecimal(exchangeRateCSV.getEur()))
+                        .addField("volty", new BigDecimal(exchangeRateCSV.getEur_20_volty()))
+                        .addField("prc", new BigDecimal(exchangeRateCSV.getEur_prc()).movePointRight(2))
+                        .build());
+
+
+                influxDB.write(Point.measurement("jpy")
+                        .time(unixTimeInSeconds, TimeUnit.SECONDS)
+                        .addField("price", new BigDecimal(exchangeRateCSV.getJpy()))
+                        .addField("volty", new BigDecimal(exchangeRateCSV.getJpy_20_volty()))
+                        .addField("prc", new BigDecimal(exchangeRateCSV.getJpy_prc()).movePointRight(2))
+                        .build());
+
+                influxDB.write(Point.measurement("gbp")
+                        .time(unixTimeInSeconds, TimeUnit.SECONDS)
+                        .addField("price", new BigDecimal(exchangeRateCSV.getGbp()))
+                        .addField("volty", new BigDecimal(exchangeRateCSV.getGbp_20_volty()))
+                        .addField("prc", new BigDecimal(exchangeRateCSV.getGbp_prc()).movePointRight(2))
+                        .build());
+
+                influxDB.write(Point.measurement("hkd")
+                        .time(unixTimeInSeconds, TimeUnit.SECONDS)
+                        .addField("price", new BigDecimal(exchangeRateCSV.getHkd()))
+                        .addField("volty", new BigDecimal(exchangeRateCSV.getHkd_20_volty()))
+                        .addField("prc", new BigDecimal(exchangeRateCSV.getHkd_prc()).movePointRight(2))
+                        .build());
+
+                influxDB.write(Point.measurement("krw")
+                        .time(unixTimeInSeconds, TimeUnit.SECONDS)
+                        .addField("price", new BigDecimal(exchangeRateCSV.getKrw()))
+                        .addField("volty", new BigDecimal(exchangeRateCSV.getKrw_20_volty()))
+                        .addField("prc", new BigDecimal(exchangeRateCSV.getKrw_prc()).movePointRight(2))
+                        .build());
+
+
+                influxDB.write(Point.measurement("mxn")
+                        .time(unixTimeInSeconds, TimeUnit.SECONDS)
+                        .addField("price", new BigDecimal(exchangeRateCSV.getMxn()))
+                        .addField("volty", new BigDecimal(exchangeRateCSV.getMxn_20_volty()))
+                        .addField("prc", new BigDecimal(exchangeRateCSV.getMxn_prc()).movePointRight(2))
+                        .build());
+
+                influxDB.write(Point.measurement("btc")
+                        .time(unixTimeInSeconds, TimeUnit.SECONDS)
+                        .addField("price", new BigDecimal(exchangeRateCSV.getBtc_close()))
+                        .addField("volty", new BigDecimal(exchangeRateCSV.getBtc_close_20_volty()))
+                        .addField("prc", new BigDecimal(exchangeRateCSV.getBtc_close_prc_nextday()).movePointRight(2))
+                        .addField("volume", new BigDecimal(exchangeRateCSV.getBtc_volume()).movePointRight(4))
+                        .build());
+
+
+                influxDB.write(Point.measurement("eth")
+                        .time(unixTimeInSeconds, TimeUnit.SECONDS)
+                        .addField("price", new BigDecimal(exchangeRateCSV.getEth_close()))
+                        .addField("volty", new BigDecimal(exchangeRateCSV.getEth_close_20_volty()))
+                        .addField("volume", new BigDecimal(exchangeRateCSV.getEth_volume()).movePointRight(4))
+                        .build());
+
+                influxDB.write(Point.measurement("ltc")
+                        .time(unixTimeInSeconds, TimeUnit.SECONDS)
+                        .addField("price", new BigDecimal(exchangeRateCSV.getLtc_close()))
+                        .addField("volty", new BigDecimal(exchangeRateCSV.getLtc_close_20_volty()))
+                        .addField("volume", new BigDecimal(exchangeRateCSV.getLtc_volume()).movePointRight(4))
+                        .build());
+
+                influxDB.write(Point.measurement("events")
+                        .time(unixTimeInSeconds, TimeUnit.SECONDS)
+                        .addField("CHN", new BigDecimal(exchangeRateCSV.getCHN()).movePointRight(4))
+                        .addField("RUS", new BigDecimal(exchangeRateCSV.getRUS()).movePointRight(4))
+                        .addField("KOR", new BigDecimal(exchangeRateCSV.getKOR()).movePointRight(4))
+                        .addField("NGA", new BigDecimal(exchangeRateCSV.getNGA()).movePointRight(4))
+                        .addField("AF", StringUtils.isEmpty(exchangeRateCSV.getAF()) ? 0 : new BigDecimal(exchangeRateCSV.getAF()))
+                        .addField("AN", StringUtils.isEmpty(exchangeRateCSV.getAN()) ? 0 : new BigDecimal(exchangeRateCSV.getAN()))
+                        .addField("AS", StringUtils.isEmpty(exchangeRateCSV.getAS()) ? 0 : new BigDecimal(exchangeRateCSV.getAS()))
+                        .addField("EU", StringUtils.isEmpty(exchangeRateCSV.getEU()) ? 0 : new BigDecimal(exchangeRateCSV.getEU()))
+                        .addField("NA", StringUtils.isEmpty(exchangeRateCSV.getNA()) ? 0 : new BigDecimal(exchangeRateCSV.getNA()))
+                        .addField("OC", StringUtils.isEmpty(exchangeRateCSV.getOC()) ? 0 : new BigDecimal(exchangeRateCSV.getOC()))
+                        .addField("SA", StringUtils.isEmpty(exchangeRateCSV.getSA()) ? 0 : new BigDecimal(exchangeRateCSV.getSA()))
+                        .build());
+
             } catch (Exception e) {
 
                 logger.error("error writting :\n {}", exchangeRateCSV, e);
